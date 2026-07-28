@@ -1,0 +1,2 @@
+mode,step,knots_share,n_nodes,run,seed,softfork_wins,fork_depth,orphan_rate,spam_produced,spam_orphaned,breakeven_fee,core_gaveup,core_reorgs,secs
+baseline,0,0.22,21,0,7000,False,37,0.0,37,0,0.0,0,0,30.2

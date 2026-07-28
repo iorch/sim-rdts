@@ -22,53 +22,6 @@ def wrap(fragment_path, out_path):
     print("escrito", out_path)
 
 
-def _md_to_html(md):
-    """Conversor Markdown→HTML mínimo para CRITICA.md (contenido controlado)."""
-    import re
-    def esc(s):
-        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-
-    def inline(s):
-        s = esc(s)
-        s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
-        s = re.sub(r"`(.+?)`", r"<code>\1</code>", s)
-        s = re.sub(r"\*(.+?)\*", r"<em>\1</em>", s)
-        s = re.sub(r"\[(.+?)\]\((.+?)\)", r'<a href="\2">\1</a>', s)
-        return s
-
-    out, lst, para = [], [], []
-
-    def flush_para():
-        if para:
-            out.append("<p>" + " ".join(para) + "</p>")
-            para.clear()
-
-    def flush_list():
-        if lst:
-            out.append("<ul>" + "".join(f"<li>{inline(x)}</li>" for x in lst) + "</ul>")
-            lst.clear()
-
-    for raw in md.splitlines():
-        line = raw.rstrip()
-        if not line.strip():
-            flush_para(); flush_list(); continue
-        if line.startswith("### "):
-            flush_para(); flush_list(); out.append(f"<h3>{inline(line[4:])}</h3>")
-        elif line.startswith("## "):
-            flush_para(); flush_list(); out.append(f"<h2>{inline(line[3:])}</h2>")
-        elif line.startswith("# "):
-            flush_para(); flush_list(); out.append(f"<h1>{inline(line[2:])}</h1>")
-        elif line.startswith("> "):
-            flush_para(); flush_list(); out.append(f"<blockquote>{inline(line[2:])}</blockquote>")
-        elif line.strip() == "---":
-            flush_para(); flush_list(); out.append("<hr>")
-        elif line.startswith("- "):
-            flush_para(); lst.append(line[2:])
-        else:
-            flush_list(); para.append(inline(line))
-    flush_para(); flush_list()
-    return "\n".join(out)
-
 
 def build():
     os.makedirs(DOCS, exist_ok=True)
@@ -76,15 +29,9 @@ def build():
     wrap(os.path.join(RESULTS, "report2.html"), os.path.join(DOCS, "sim2.html"))
     with open(os.path.join(DOCS, "index.html"), "w", encoding="utf-8") as f:
         f.write(INDEX)
-    # página de crítica renderizada desde CRITICA.md (fuente única)
-    with open(os.path.join(ROOT, "CRITICA.md"), encoding="utf-8") as f:
-        body = _md_to_html(f.read())
-    with open(os.path.join(DOCS, "critica.html"), "w", encoding="utf-8") as f:
-        f.write(CRITICA_PAGE.replace("__BODY__", body))
     # .nojekyll para que Pages sirva los archivos tal cual
     open(os.path.join(DOCS, ".nojekyll"), "w").close()
     print("escrito", os.path.join(DOCS, "index.html"))
-    print("escrito", os.path.join(DOCS, "critica.html"))
 
 
 INDEX = r"""<!doctype html>
@@ -196,49 +143,12 @@ a.card:focus-visible{outline:2px solid var(--fork);outline-offset:3px;}
     empujando el hashpower hacia arriba (efecto cascada). Además: el fork es de consenso (no solo de
     retransmisión), y <b>el número de nodos no importa</b> — solo el hashpower (Knots con 16 a 30
     nodos pierde igual por debajo del umbral).<br><br>
-    <b>Lo que esto NO prueba:</b> ver la <a href="critica.html">crítica honesta</a> (supuestos,
-    límites y qué faltaría medir).<br><br>
     Código y datos: <a href="https://github.com/iorch/sim-rdts">github.com/iorch/sim-rdts</a> ·
     reproducible con <code>docker</code> + <code>python3</code>.
   </p>
 </div>
 """
 
-
-CRITICA_PAGE = r"""<!doctype html>
-<html lang="es">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crítica honesta · sim-rdts</title>
-<style>
-:root{--bg:#f4f2ec;--ink:#191c24;--muted:#5f6570;--hair:#e0ddd3;--accent:#d61f69;--code:#f0eee7;}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1117;--ink:#e9ebf2;--muted:#9aa1b2;--hair:#252a35;--accent:#f0559b;--code:#1a1e28;}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:ui-serif,Georgia,"Times New Roman",serif;line-height:1.72;-webkit-font-smoothing:antialiased;}
-.wrap{max-width:44rem;margin:0 auto;padding:clamp(28px,6vw,64px) clamp(18px,5vw,28px) 80px;}
-.back{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--accent);text-decoration:none;}
-.back:hover{text-decoration:underline;}
-h1{font-size:clamp(28px,5vw,40px);line-height:1.12;letter-spacing:-.01em;margin:1.2rem 0 .3rem;text-wrap:balance;}
-h2{font-size:clamp(20px,3.2vw,25px);margin:2.2rem 0 .5rem;letter-spacing:-.01em;}
-h3{font-size:17px;margin:1.6rem 0 .2rem;}
-p{margin:.7rem 0;} b{font-weight:700;} em{font-style:italic;}
-blockquote{margin:1.2rem 0;padding:.4rem 0 .4rem 1.1rem;border-left:3px solid var(--accent);
-  color:var(--muted);font-style:italic;}
-ul{margin:.6rem 0;padding-left:1.3rem;} li{margin:.35rem 0;}
-hr{border:0;border-top:1px solid var(--hair);margin:2.4rem 0;}
-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;background:var(--code);
-  border:1px solid var(--hair);border-radius:5px;padding:.05em .4em;}
-a{color:var(--accent);}
-.wrap>h1:first-of-type+*{}
-</style>
-<div class="wrap">
-<a class="back" href="index.html">← volver a las simulaciones</a>
-__BODY__
-<hr>
-<a class="back" href="index.html">← volver a las simulaciones</a>
-</div>
-"""
 
 
 if __name__ == "__main__":

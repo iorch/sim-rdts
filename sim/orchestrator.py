@@ -56,6 +56,8 @@ class Network:
         assert len(self.weights) == self.n
         self.run_id = run_id
         self.nodes = []
+        self.adaptive = False       # si True, un minero Core deja de incluir datos tras sufrir orfandad
+        self.core_gaveup = set()    # índices de nodos Core que ya dejaron de spamear
 
     def start(self):
         ensure_network()
@@ -113,20 +115,23 @@ class Network:
         time.sleep(secs)
 
     def mine_round(self, idx, p_spam, rng, spam_kind):
-        """El nodo idx mina 1 bloque. Core con prob p_spam mina un bloque SPAM."""
+        """El nodo idx mina 1 bloque. Core con probabilidad p_spam mina un bloque con datos,
+        salvo que ya se haya 'rendido' (modo adaptativo). Devuelve (tipo, hash_spam, idx)."""
         node = self.nodes[idx]
-        if node.kind == "core" and rng.random() < p_spam:
+        spam_ok = (node.kind == "core" and idx not in self.core_gaveup
+                   and rng.random() < p_spam)
+        if spam_ok:
             try:
                 kind, txs = S.build_spam(node, WALLET, spam_kind, rng)
-                node.call("generateblock", self.addr[idx], txs)
-                return ("spam", kind)
-            except (RPCError, StopIteration) as e:
+                h = node.call("generateblock", self.addr[idx], txs)["hash"]
+                return ("spam", h, idx)
+            except (RPCError, StopIteration):
                 # sin fondos u otro fallo: cae a bloque limpio
                 node.call("generatetoaddress", 1, self.addr[idx])
-                return ("clean_fallback", str(e)[:40])
+                return ("clean_fallback", None, idx)
         else:
             node.call("generatetoaddress", 1, self.addr[idx])
-            return ("clean", node.kind)
+            return ("clean", None, idx)
 
     # -- métricas de fork al final de la corrida
     def measure(self):
@@ -190,10 +195,21 @@ def _drive(net, blocks, p_spam, seed, spam_kind, keep):
         prev_tip = rep.call("getbestblockhash") if rep else None
         core_reorgs = 0
         core_discarded = 0
+        spam_hashes = {}            # hash del bloque con datos -> índice del minero Core que lo produjo
+
+        def orphaned(h):
+            """True si el bloque h NO está en la cadena activa de Core (quedó huérfano)."""
+            try:
+                return rep.call("getblockheader", h)["confirmations"] == -1
+            except RPCError:
+                return False
+
         for r in range(blocks):
             # modelo de hashpower: minero elegido PONDERADO por su peso (uniforme si todos=1)
             idx = rng.choices(node_ids, weights=net.weights, k=1)[0]
-            kind, _ = net.mine_round(idx, p_spam, rng, spam_kind)
+            kind, bhash, midx = net.mine_round(idx, p_spam, rng, spam_kind)
+            if kind == "spam":
+                spam_hashes[bhash] = midx
             events[kind if kind in events else "clean"] = events.get(
                 kind if kind in events else "clean", 0) + 1
             net._settle(0.35)                   # propagación P2P (localhost)
@@ -216,16 +232,32 @@ def _drive(net, blocks, p_spam, seed, spam_kind, keep):
                     except RPCError:
                         pass
                     prev_tip = cur
+                # modo adaptativo: un minero Core cuyo bloque con datos quedó huérfano deja de spamear
+                if net.adaptive:
+                    for h, mi in spam_hashes.items():
+                        if mi not in net.core_gaveup and orphaned(h):
+                            net.core_gaveup.add(mi)
         net._settle(3.0)                        # asentamiento final
         tot = sum(net.weights)
         knots_share = sum(w for w, k in zip(net.weights, net.kinds) if k == "knots") / tot
         m = net.measure()
+        # probabilidad de orfandad REAL de un bloque con datos = huérfanos / producidos
+        spam_produced = len(spam_hashes)
+        spam_orphaned = sum(1 for h in spam_hashes if orphaned(h)) if rep else 0
+        orphan_rate = (spam_orphaned / spam_produced) if spam_produced else 0.0
+        # premio de equilibrio: cuánto (como fracción del premio de bloque) debe pagar el dato
+        # para que valga el riesgo de orfandad.  d* = p/(1-p)
+        breakeven_fee = (orphan_rate / (1 - orphan_rate)) if orphan_rate < 1 else float("inf")
         # "softfork gana" = convergen (Knots nunca acepta spam, así que converger = cadena limpia)
         m.update({"seed": seed, "blocks": blocks, "p_spam": p_spam,
                   "spam_kind": spam_kind, "spam_blocks": events["spam"],
                   "knots_share": round(knots_share, 4), "n_nodes": net.n,
                   "softfork_wins": (not m["fork"]) or m["fork_depth"] < 6,
                   "core_reorgs": core_reorgs, "core_blocks_discarded": core_discarded,
+                  "spam_produced": spam_produced, "spam_orphaned": spam_orphaned,
+                  "orphan_rate": round(orphan_rate, 4),
+                  "breakeven_fee": (round(breakeven_fee, 4) if breakeven_fee != float("inf") else None),
+                  "core_gaveup": len(net.core_gaveup), "adaptive": net.adaptive,
                   "secs": round(time.time() - t0, 1)})
         return m
     finally:
@@ -239,9 +271,11 @@ def run_once(n_knots, blocks=60, p_spam=1.0, seed=0, spam_kind="random", keep=Fa
 
 
 def run_weighted(kinds, weights, scenario_id, blocks=60, p_spam=1.0, seed=0,
-                 spam_kind="random", keep=False):
-    """sim-2: red con hashpower heterogéneo (kinds[] + weights[] explícitos)."""
+                 spam_kind="random", keep=False, adaptive=False):
+    """sim-2: red con hashpower heterogéneo (kinds[] + weights[] explícitos).
+    adaptive=True: un minero Core deja de incluir datos tras ver un bloque suyo huérfano."""
     net = Network(0, scenario_id, kinds=kinds, weights=weights)
+    net.adaptive = adaptive
     return _drive(net, blocks, p_spam, seed, spam_kind, keep)
 
 
