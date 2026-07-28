@@ -1,0 +1,25 @@
+# Bitcoin Core 31.1 (última) — no conoce RDTS/BIP-110.
+# Base aarch64 para Docker Desktop en Apple Silicon.
+FROM debian:bookworm-slim
+
+ARG VERSION=31.1
+ARG ARCH=aarch64-linux-gnu
+ARG SHA256=dcf1873f2208ba4f962f3398d47e154c39c0084be8f4553e05c940d0ace3d004
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends ca-certificates curl; \
+    rm -rf /var/lib/apt/lists/*; \
+    url="https://bitcoincore.org/bin/bitcoin-core-${VERSION}/bitcoin-${VERSION}-${ARCH}.tar.gz"; \
+    curl -fsSL "$url" -o /tmp/bitcoin.tar.gz; \
+    echo "${SHA256}  /tmp/bitcoin.tar.gz" | sha256sum -c -; \
+    tar -xzf /tmp/bitcoin.tar.gz -C /tmp; \
+    install -m0755 /tmp/bitcoin-${VERSION}/bin/bitcoind /usr/local/bin/bitcoind; \
+    install -m0755 /tmp/bitcoin-${VERSION}/bin/bitcoin-cli /usr/local/bin/bitcoin-cli; \
+    rm -rf /tmp/bitcoin*; \
+    bitcoind --version | head -1
+
+RUN useradd -m -u 1000 bitcoin && mkdir -p /home/bitcoin/.bitcoin && chown -R bitcoin:bitcoin /home/bitcoin
+USER bitcoin
+EXPOSE 18443 18444
+ENTRYPOINT ["bitcoind", "-conf=/conf/core.conf", "-datadir=/home/bitcoin/.bitcoin"]

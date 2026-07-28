@@ -1,0 +1,25 @@
+# Bitcoin Knots v29.3.knots20260508 (última) — aplica el softfork BIP-110 / RDTS.
+# Base aarch64 para Docker Desktop en Apple Silicon.
+FROM debian:bookworm-slim
+
+ARG VERSION=29.3.knots20260508
+ARG ARCH=aarch64-linux-gnu
+ARG SHA256=c80ed10834ed96f532bd673d6f691b960ddb00f6889d1fed9a3dcbf14284e01c
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends ca-certificates curl; \
+    rm -rf /var/lib/apt/lists/*; \
+    url="https://bitcoinknots.org/files/29.x/${VERSION}/bitcoin-${VERSION}-${ARCH}.tar.gz"; \
+    curl -fsSL "$url" -o /tmp/bitcoin.tar.gz; \
+    echo "${SHA256}  /tmp/bitcoin.tar.gz" | sha256sum -c -; \
+    tar -xzf /tmp/bitcoin.tar.gz -C /tmp; \
+    install -m0755 /tmp/bitcoin-${VERSION}/bin/bitcoind /usr/local/bin/bitcoind; \
+    install -m0755 /tmp/bitcoin-${VERSION}/bin/bitcoin-cli /usr/local/bin/bitcoin-cli; \
+    rm -rf /tmp/bitcoin*; \
+    bitcoind --version | head -1
+
+RUN useradd -m -u 1000 bitcoin && mkdir -p /home/bitcoin/.bitcoin && chown -R bitcoin:bitcoin /home/bitcoin
+USER bitcoin
+EXPOSE 18443 18444
+ENTRYPOINT ["bitcoind", "-conf=/conf/knots.conf", "-datadir=/home/bitcoin/.bitcoin"]
