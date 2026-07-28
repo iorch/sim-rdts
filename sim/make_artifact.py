@@ -28,11 +28,11 @@ def build():
     payload = {"rows": rows, "threshold": threshold}
 
     stats = [
-        ("Corridas totales", f"{total_runs}", "20 nodos regtest · minero uniforme por bloque"),
-        ("Umbral de cruce", (f"N ≈ {cross}" if cross else "—"),
-         "P(fork) baja de 50% en ~55% del hashpower — algo por encima del 50% naive"),
-        ("P(fork) · 1 Knots", f"{at(1,'p_fork',0)*100:.0f}%", "un solo nodo Knots contra 19 Core"),
-        ("P(fork) · 19 Knots", f"{at(19,'p_fork',0)*100:.0f}%", "Knots mayoría: el softfork se impone"),
+        ("Corridas totales", f"{total_runs}", "20 nodos regtest · el minero de cada bloque se elige al azar"),
+        ("Umbral de cruce", (f"{cross} nodos" if cross else "—"),
+         "la probabilidad de fork baja del 50% cerca del 55% del hashpower — algo por encima del 50% ingenuo"),
+        ("Fork con 1 nodo Knots", f"{at(1,'p_fork',0)*100:.0f}%", "un solo nodo Knots contra 19 de Core"),
+        ("Fork con 19 nodos Knots", f"{at(19,'p_fork',0)*100:.0f}%", "Knots mayoría: el softfork se impone"),
     ]
     stat_html = "\n".join(
         f'<div class="tile"><div class="tile-label">{lbl}</div>'
@@ -174,16 +174,16 @@ td.num{font-family:ui-monospace,Menlo,monospace;text-align:right;font-variant-nu
       <div class="tooltip" id="tt"></div>
     </div>
     <div class="legend">
-      <span><span class="swatch line" style="background:var(--fork)"></span>P(fork)</span>
-      <span><span class="swatch band"></span>IC 95%</span>
-      <span><span class="swatch dash"></span>50% hashpower</span>
+      <span><span class="swatch line" style="background:var(--fork)"></span>Probabilidad de fork</span>
+      <span><span class="swatch band"></span>Intervalo de confianza 95%</span>
+      <span><span class="swatch dash"></span>50% del hashpower</span>
     </div>
   </div>
 
   <div class="card">
-    <h2>Profundidad del split</h2>
+    <h2>Profundidad de la división de la cadena</h2>
     <p class="sub">Bloques que separan la cadena de Knots de la de Core al final de la corrida
-    (promedio). Cuanto más profundo, más irreversible el fork.</p>
+    (promedio). Cuanto más profunda, más irreversible el fork.</p>
     <div class="chart-wrap" id="depthwrap">
       <svg id="depthchart" viewBox="0 0 800 240" preserveAspectRatio="xMidYMid meet"></svg>
       <div class="tooltip" id="tt2"></div>
@@ -206,9 +206,9 @@ td.num{font-family:ui-monospace,Menlo,monospace;text-align:right;font-variant-nu
     <div class="chart-wrap">
     <table id="datatable">
       <thead><tr>
-        <th>Knots</th><th>Core</th><th>Hashpower</th><th class="num">Forks</th>
-        <th class="num">P(fork)</th><th class="num">IC 95%</th>
-        <th class="num">Prof. media</th><th>Knots gana</th>
+        <th>Nodos Knots</th><th>Nodos Core</th><th>Hashpower</th><th class="num">Forks</th>
+        <th class="num">Probabilidad de fork</th><th class="num">Intervalo de confianza 95%</th>
+        <th class="num">Profundidad media</th><th class="num">Softfork gana</th>
       </tr></thead>
       <tbody id="tbody"></tbody>
     </table>
@@ -216,23 +216,24 @@ td.num{font-family:ui-monospace,Menlo,monospace;text-align:right;font-variant-nu
   </div>
 
   <p class="foot">
-    <b>Lectura.</b> RDTS es un <b>softfork</b>: no produce un split permanente si la mayoría del
+    <b>Lectura.</b> RDTS es un <b>softfork</b>: no produce una división permanente si la mayoría del
     hashpower lo aplica. La simulación lo muestra — el fork persistente aparece cuando Knots es
     <b>minoría</b> (queda aislado en una cadena más corta) y desaparece cuando es <b>mayoría</b>
-    (Core reorganiza hacia la cadena limpia y descarta sus bloques con datos). El cruce empírico
-    está en <b>~55% del hashpower</b> (algo por encima del 50% naive): Knots necesita una leve
+    (Core reorganiza hacia la cadena limpia y descarta sus bloques con datos). El cruce medido
+    está en <b>~55% del hashpower</b> (algo por encima del 50% ingenuo): Knots necesita una leve
     supermayoría porque cada vez que su cadena limpia lidera, Core la adopta y le pone un bloque
-    con datos encima, absorbiendo su ventaja. Con ≥80% del hashpower el softfork gana siempre.<br><br>
-    <b>Incentivo económico.</b> Aunque el softfork solo "gana" a ~55%, Core empieza a perder
-    bloques mucho antes. Contando los reemplazos de su cadena en tiempo real (1 bloque ≈ 10 min,
-    144/día): con Knots al 30% del hashpower Core sufre ~0.5 reemplazos/día, al 55% ~6/día y al
-    80% ~15/día. El umbral de <b>≥1 reemplazo/día</b> se cruza cerca del <b>~30% de hashpower</b> —
-    muy por debajo del 55% de victoria. Es decir, una minoría del ~30% ya impone a Core una pérdida
-    diaria de bloques, creando incentivo a <b>señalar RDTS</b> para dejar de perderlos (efecto
-    cascada). El detalle completo, en la simulación de hashpower concentrado (sim-2).<br><br>
-    <b>Método.</b> 20 nodos regtest en Docker, cada uno = 1/20 del hashpower (minero elegido
-    uniforme por bloque). Malla P2P completa con <code>whitelist=noban</code> para que el split
-    sea por consenso y no por desconexión. RDTS forzado activo en Knots con
+    con datos encima, absorbiendo su ventaja. Con 80% o más del hashpower el softfork gana siempre.<br><br>
+    <b>Incentivo económico.</b> Aunque el softfork solo "gana" cerca del 55%, Core empieza a perder
+    bloques mucho antes. Contando los reemplazos de su cadena en tiempo real (1 bloque ≈ 10 minutos,
+    144 por día): con Knots al 30% del hashpower Core sufre alrededor de 0.5 reemplazos por día, al
+    55% unos 6 por día y al 80% unos 15 por día. El umbral de <b>al menos un reemplazo por día</b>
+    se cruza cerca del <b>30% del hashpower</b> — muy por debajo del 55% de la victoria. Es decir,
+    una minoría de alrededor del 30% ya impone a Core una pérdida diaria de bloques, creando
+    incentivo a <b>señalar RDTS</b> para dejar de perderlos (efecto cascada). El detalle completo,
+    en la simulación de hashpower concentrado (sim-2).<br><br>
+    <b>Método.</b> 20 nodos regtest en Docker, cada uno con 1/20 del hashpower (el minero de cada
+    bloque se elige al azar). Todos los nodos conectados entre sí, con <code>whitelist=noban</code>
+    para que la división sea por consenso y no por desconexión. RDTS forzado activo en Knots con
     <code>-vbparams=reduced_data:-1:...</code>. En todas las corridas los nodos Core coincidieron
     entre sí y los Knots entre sí — el corte es limpio entre las dos poblaciones.
   </p>
@@ -287,10 +288,10 @@ function drawProb(){
     tt.style.opacity=1;
     tt.innerHTML=`<div class="tt-n">${n} Knots · ${20-n} Core</div>`+
       `<div class="tt-row"><span>Hashpower</span><b>${(r.hashpower*100).toFixed(0)}%</b></div>`+
-      `<div class="tt-row"><span>P(fork)</span><b>${(r.p_fork*100).toFixed(0)}%</b></div>`+
-      `<div class="tt-row"><span>IC 95%</span><b>${(r.ci_lo*100).toFixed(0)}–${(r.ci_hi*100).toFixed(0)}%</b></div>`+
+      `<div class="tt-row"><span>Probabilidad de fork</span><b>${(r.p_fork*100).toFixed(0)}%</b></div>`+
+      `<div class="tt-row"><span>Intervalo de confianza 95%</span><b>${(r.ci_lo*100).toFixed(0)}–${(r.ci_hi*100).toFixed(0)}%</b></div>`+
       `<div class="tt-row"><span>Forks</span><b>${r.forks}/${r.runs}</b></div>`+
-      `<div class="tt-row"><span>Prof. media</span><b>${r.mean_depth.toFixed(1)}</b></div>`;
+      `<div class="tt-row"><span>Profundidad media</span><b>${r.mean_depth.toFixed(1)}</b></div>`;
     const tw=tt.offsetWidth,cx=xs(n)/W*rect.width,cy=ys(r.p_fork)/H*rect.height;
     tt.style.left=Math.min(Math.max(cx-tw/2,4),rect.width-tw-4)+'px';
     tt.style.top=(cy-tt.offsetHeight-14)+'px';
@@ -329,7 +330,7 @@ function fillTable(){
       `<td class="num">${(r.p_fork*100).toFixed(0)}%</td>`+
       `<td class="num">${(r.ci_lo*100).toFixed(0)}–${(r.ci_hi*100).toFixed(0)}%</td>`+
       `<td class="num barcell"><span class="bar" style="width:${bw}px"></span> ${r.mean_depth.toFixed(1)}</td>`+
-      `<td class="num">${r.knots_wins}/${r.runs}</td></tr>`;
+      `<td class="num">${r.softfork_wins}/${r.runs}</td></tr>`;
   }).join('');
 }
 

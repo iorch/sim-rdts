@@ -100,12 +100,15 @@ a.card:focus-visible{outline:2px solid var(--fork);outline-offset:3px;}
   </div>
 
   <p class="foot">
-    <b>Hallazgos.</b> Lo decisivo es el <b>cruce de incentivos, no el de victoria</b>: Core empieza
-    a perder <b>≥1 bloque/día</b> por reorg desde apenas <b>~30% de hashpower Knots</b> — mucho
-    antes del <b>~55-57%</b> en que el softfork realmente gana. Ese ≥1/día le da a un minero Core
-    incentivo a <b>señalar RDTS</b> para dejar de perder bloques, empujando el share hacia arriba
-    (efecto cascada). Además: el fork es de consenso (no solo de relay), y <b>el número de nodos no
-    importa</b> — solo el hashpower (Knots con 16-30 nodos pierde igual por debajo del umbral).<br><br>
+    <b>Hallazgos.</b> Lo decisivo es el <b>cruce de incentivos, no el de la victoria</b>: Core empieza
+    a perder <b>al menos un bloque por día</b> por reorganización desde apenas <b>~30% del hashpower
+    de Knots</b> — mucho antes del <b>~55-57%</b> en que el softfork realmente gana. Esa pérdida
+    diaria le da a un minero Core incentivo a <b>señalar RDTS</b> para dejar de perder bloques,
+    empujando el hashpower hacia arriba (efecto cascada). Además: el fork es de consenso (no solo de
+    retransmisión), y <b>el número de nodos no importa</b> — solo el hashpower (Knots con 16 a 30
+    nodos pierde igual por debajo del umbral).<br><br>
+    <b>Lo que esto NO prueba:</b> ver la <a href="critica.html">crítica honesta</a> (supuestos,
+    límites y qué faltaría medir).<br><br>
     Código y datos: <a href="https://github.com/iorch/sim-rdts">github.com/iorch/sim-rdts</a> ·
     reproducible con <code>docker</code> + <code>python3</code>.
   </p>

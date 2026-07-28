@@ -72,7 +72,9 @@ def aggregate(by_n):
             "runs": len(runs), "forks": k,
             "p_fork": p, "ci_lo": lo, "ci_hi": hi,
             "mean_depth": sum(depths) / len(depths),
-            "knots_wins": sum(1 for x in runs if x["winner"] == "knots"),
+            # softfork gana = las cadenas convergen en la limpia = NO hay fork persistente.
+            # (Al converger, core_h == knots_h => winner=="tie", por eso no se cuenta por winner.)
+            "softfork_wins": sum(1 for x in runs if not x["persistent"]),
             "all_consensus": all(x["core_cons"] and x["knots_cons"] for x in runs),
         })
     return agg
@@ -142,8 +144,8 @@ def write_report(agg, threshold):
                  f"cadenas Core y Knots divergen ≥ {threshold} bloques.\n")
     lines.append("![Probabilidad de fork](fork_probability.png)\n")
     lines.append("## Resultados por proporción\n")
-    lines.append("| Knots | Core | Hashpower Knots | Corridas | Forks | P(fork) | "
-                 "IC95% | Prof. media | Knots gana |")
+    lines.append("| Nodos Knots | Nodos Core | Hashpower Knots | Corridas | Forks | "
+                 "Probabilidad de fork | Intervalo 95% | Profundidad media | Softfork gana |")
     lines.append("|------:|-----:|:---------------:|:--------:|:-----:|:-------:|"
                  ":-----:|:-----------:|:----------:|")
     for a in agg:
@@ -151,7 +153,7 @@ def write_report(agg, threshold):
             f"| {a['n_knots']} | {20-a['n_knots']} | {a['hashpower']*100:.0f}% | "
             f"{a['runs']} | {a['forks']} | {a['p_fork']*100:.0f}% | "
             f"[{a['ci_lo']*100:.0f}–{a['ci_hi']*100:.0f}%] | {a['mean_depth']:.1f} | "
-            f"{a['knots_wins']} |")
+            f"{a['softfork_wins']} |")
     # lectura
     cross = next((a["n_knots"] for a in agg if a["p_fork"] < 0.5), None)
     all_cons = all(a["all_consensus"] for a in agg)
