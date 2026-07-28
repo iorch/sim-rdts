@@ -9,12 +9,15 @@ Reporta, por share de hashpower Knots:
   - P(≥1 reemplazo por día)       ≈ 1 - exp(-reorgs/día)   (modelo Poisson)
 El umbral de interés: reorgs/día ≥ 1  =>  incentivo diario para señalar RDTS.
 """
+
+import os as _os
+_ROOT = _os.environ.get("SIM_RDTS_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 import csv
 import math
 import statistics as st
 from collections import defaultdict
 
-RES = "/Users/jmo/bitcoin/bip110/results"
+RES = _os.path.join(_ROOT, "results")
 BLOCKS = 45
 PER_DAY = 144  # bloques/día a 10 min
 

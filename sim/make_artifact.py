@@ -1,10 +1,13 @@
 """Genera results/report.html: dashboard interactivo autocontenido a partir de summary.json.
 Gráfico SVG dibujado en JS (hover con tooltip), tema claro/oscuro. Sin dependencias externas.
 """
+
+import os as _os
+_ROOT = _os.environ.get("SIM_RDTS_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 import json
 import os
 
-RES = "/Users/jmo/bitcoin/bip110/results"
+RES = _os.path.join(_ROOT, "results")
 
 
 def build():

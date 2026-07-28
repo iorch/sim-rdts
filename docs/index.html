@@ -100,11 +100,12 @@ a.card:focus-visible{outline:2px solid var(--fork);outline-offset:3px;}
   </div>
 
   <p class="foot">
-    <b>Hallazgos.</b> El fork es de consenso (no solo de relay). El softfork "gana" (Core
-    reorganiza a la cadena limpia) con una <b>leve supermayoría ~55-57%</b> de hashpower, no en
-    50%. El <b>número de nodos no importa</b> — solo el hashpower. Y Core empieza a perder
-    <b>≥1 bloque/día</b> por reorg desde ~30% de hashpower Knots, creando incentivo temprano a
-    señalar RDTS.<br><br>
+    <b>Hallazgos.</b> Lo decisivo es el <b>cruce de incentivos, no el de victoria</b>: Core empieza
+    a perder <b>≥1 bloque/día</b> por reorg desde apenas <b>~30% de hashpower Knots</b> — mucho
+    antes del <b>~55-57%</b> en que el softfork realmente gana. Ese ≥1/día le da a un minero Core
+    incentivo a <b>señalar RDTS</b> para dejar de perder bloques, empujando el share hacia arriba
+    (efecto cascada). Además: el fork es de consenso (no solo de relay), y <b>el número de nodos no
+    importa</b> — solo el hashpower (Knots con 16-30 nodos pierde igual por debajo del umbral).<br><br>
     Código y datos: <a href="https://github.com/iorch/sim-rdts">github.com/iorch/sim-rdts</a> ·
     reproducible con <code>docker</code> + <code>python3</code>.
   </p>

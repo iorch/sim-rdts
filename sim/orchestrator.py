@@ -4,6 +4,9 @@ mina según un modelo de hashpower (cada nodo = 1/20) e inyecta bloques spam des
 
 Uso directo:  python3 orchestrator.py --knots 5 --blocks 60 --pspam 1.0 --seed 1
 """
+
+import os as _os
+_ROOT = _os.environ.get("SIM_RDTS_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 import argparse
 import concurrent.futures as cf
 import random
@@ -11,13 +14,13 @@ import subprocess
 import sys
 import time
 
-sys.path.insert(0, "/Users/jmo/bitcoin/bip110/sim")
+sys.path.insert(0, _os.path.join(_ROOT, "sim"))
 from rpc import Node, RPCError  # noqa: E402
 import spam_txs as S  # noqa: E402
 
 TOTAL = 20
 NET = "bip110net"
-CONF = "/Users/jmo/bitcoin/bip110/docker/conf"
+CONF = _os.path.join(_ROOT, "docker/conf")
 IMG_CORE = "bip110-core:31.1"
 IMG_KNOTS = "bip110-knots:29.3"
 RDTS_ARG = "-vbparams=reduced_data:-1:9223372036854775807"

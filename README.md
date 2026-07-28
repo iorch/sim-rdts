@@ -78,12 +78,12 @@ python3 ../deploy/build_pages.py
 
 ## Notas / limitaciones
 
-- **Rutas absolutas:** los scripts en `sim/` usan rutas absolutas al directorio de desarrollo
-  (`/Users/jmo/bitcoin/bip110`). Para correr en otra máquina hay que ajustarlas (pendiente:
-  hacerlas relativas al repo).
+- **Rutas:** los scripts resuelven todo relativo al repo (`__file__`); se puede sobreescribir la
+  raíz con la variable de entorno `SIM_RDTS_ROOT`.
 - **Dependencia externa:** `spam_txs.py` reutiliza el *functional test framework* de Bitcoin Core
   (`test/functional/test_framework`) como librería para serializar transacciones taproot/witness.
-  Ajustar la ruta `_TF` a un checkout local del código de Bitcoin.
+  Apuntar a un checkout local con la variable `BITCOIN_FUNCTIONAL_TEST` (por defecto usa una ruta
+  de desarrollo). Solo lo necesitan las corridas (no el análisis ni la generación del sitio).
 - **`p_spam=1.0`** en las corridas: cada bloque de Core lleva datos → cota superior de la
   frecuencia de reorg. Con menos actividad de datos, los umbrales de incentivo se corren.
 - Simulación en **regtest** (dificultad fija): "más largo" = "más bloques"; en mainnet sería

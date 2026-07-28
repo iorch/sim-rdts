@@ -4,16 +4,19 @@ media y mediana de reorgs de Core y de bloques descartados.
 
 Uso:  python3 reorg_probe.py --ns 6,11,16 --runs 6 --blocks 45
 """
+
+import os as _os
+_ROOT = _os.environ.get("SIM_RDTS_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 import argparse
 import csv
 import os
 import statistics as st
 import sys
 
-sys.path.insert(0, "/Users/jmo/bitcoin/bip110/sim")
+sys.path.insert(0, _os.path.join(_ROOT, "sim"))
 from orchestrator import run_once  # noqa: E402
 
-OUT = "/Users/jmo/bitcoin/bip110/results/reorg_probe.csv"
+OUT = _os.path.join(_ROOT, "results/reorg_probe.csv")
 FIELDS = ["n_knots", "run", "seed", "fork", "fork_depth", "winner",
           "core_reorgs", "core_blocks_discarded", "spam_blocks", "secs"]
 

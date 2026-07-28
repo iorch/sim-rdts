@@ -4,16 +4,19 @@ por corrida) para poder monitorear el progreso y sobrevivir a interrupciones.
 
 Uso:  python3 montecarlo.py --runs 10 --blocks 45 --pspam 1.0
 """
+
+import os as _os
+_ROOT = _os.environ.get("SIM_RDTS_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 import argparse
 import csv
 import os
 import sys
 import time
 
-sys.path.insert(0, "/Users/jmo/bitcoin/bip110/sim")
+sys.path.insert(0, _os.path.join(_ROOT, "sim"))
 from orchestrator import run_once  # noqa: E402
 
-RESULTS = "/Users/jmo/bitcoin/bip110/results/results.csv"
+RESULTS = _os.path.join(_ROOT, "results/results.csv")
 FIELDS = ["n_knots", "run", "seed", "fork", "fork_depth", "winner",
           "core_height", "knots_height", "common_height", "spam_blocks",
           "core_consensus", "knots_consensus", "blocks", "p_spam", "spam_kind", "secs"]

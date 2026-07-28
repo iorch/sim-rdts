@@ -9,11 +9,14 @@ Reglas RDTS ejercitadas:
   - regla 2: item de witness > 256 bytes            -> (script/witness too large)
 Reutiliza el functional test framework de Bitcoin Core como librería para serializar scripts.
 """
+
+import os as _os
+_ROOT = _os.environ.get("SIM_RDTS_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 import os
 import sys
 
 # functional test framework (reutilizado como librería, no como runner)
-_TF = "/Users/jmo/bitcoin/btc/test/functional"
+_TF = _os.environ.get("BITCOIN_FUNCTIONAL_TEST", "/Users/jmo/bitcoin/btc/test/functional")
 if _TF not in sys.path:
     sys.path.insert(0, _TF)
 

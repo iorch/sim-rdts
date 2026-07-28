@@ -4,6 +4,9 @@ media y mediana). Escribe results/sim2_summary.json + results/sim2.png + imprime
 
 Uso:  python3 analyze2.py
 """
+
+import os as _os
+_ROOT = _os.environ.get("SIM_RDTS_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 import csv
 import json
 import math
@@ -14,7 +17,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-RES = "/Users/jmo/bitcoin/bip110/results"
+RES = _os.path.join(_ROOT, "results")
 CSV = f"{RES}/sim2.csv"
 
 INK, MUTED, GRID = "#1f2430", "#8a92a6", "#e7e9f0"

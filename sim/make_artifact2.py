@@ -1,10 +1,13 @@
 """Genera results/report2.html: dashboard interactivo de sim-2 (hashpower concentrado).
 Curva P(el softfork gana) + "bloques que tira Core" (pico en el cruce), tema claro/oscuro.
 """
+
+import os as _os
+_ROOT = _os.environ.get("SIM_RDTS_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 import json
 import math
 
-RES = "/Users/jmo/bitcoin/bip110/results"
+RES = _os.path.join(_ROOT, "results")
 BLOCKS = 45      # bloques por corrida
 PER_DAY = 144    # bloques/día a 10 min
 
@@ -31,12 +34,12 @@ def build():
     peak = max(rows, key=lambda r: r["disc_mean"])
 
     stats = [
+        ("Umbral de incentivo", inc_share,
+         "share de Knots donde Core ya pierde ≥1 bloque/día por reorg → conviene señalar RDTS"),
         ("Umbral de victoria", "~57%",
-         "share de hashpower Knots donde el softfork empieza a ganar — igual que el modelo uniforme"),
+         "share donde el softfork ya gana (Core reorganiza a la limpia) — mucho después del incentivo"),
         ("Nodos ≠ poder", "16→26",
          "Knots corre en muchos más nodos que Core y aun así pierde por debajo del umbral"),
-        ("Umbral de incentivo", inc_share,
-         "share de Knots donde Core ya pierde ≥1 bloque/día por reorg — mucho antes de perder el fork"),
         ("Pico de desperdicio", f"{peak['disc_mean']:.0f} bloq",
          f"máximos bloques que tira Core, justo en el cruce ({peak['knots_share']*100:.0f}% share)"),
     ]
@@ -215,14 +218,21 @@ td.num{font-family:ui-monospace,Menlo,monospace;text-align:right;font-variant-nu
   </div>
 
   <p class="foot">
-    <b>Conclusión.</b> El cruce está en <b>~57% del hashpower</b> — casi idéntico al modelo de
-    nodos iguales. Con el hashpower concentrado en pocos mineros y Knots repartido en hasta 30
-    nodos, <b>el número de nodos no cambia nada</b>: lo único que decide es el share de hashpower.
-    Tener muchos nodos Knots no ayuda a imponer el softfork si no llevan la minería.<br><br>
-    <b>Y el desperdicio.</b> Los bloques que Core tira hacen pico <b>en el cruce</b> (~14/corrida a
-    61% de share) y bajan hacia los extremos: con Core dominante nunca cede; con Knots dominante
-    Core reorganiza seguido pero superficial. La mayor destrucción de trabajo ocurre justo donde
-    el fork es más disputado.<br><br>
+    <b>Conclusión — el cruce que importa es el de los incentivos (~30%), no el de la victoria (~57%).</b>
+    El softfork solo "gana" (Core reorganiza a la cadena limpia) con una leve supermayoría de
+    ~57% del hashpower. Pero <b>mucho antes de eso Core ya está perdiendo bloques</b>: desde apenas
+    <b>~30% de hashpower en Knots</b>, Core sufre <b>≥1 reemplazo de cadena por día</b>. Ese es el
+    umbral accionable: a un minero Core racional le empieza a convenir <b>señalar RDTS</b> para dejar
+    de perder bloques mucho antes de que el softfork sea mayoría — y al hacerlo empuja el share hacia
+    arriba, realimentando el proceso (<b>efecto cascada</b>). El 57% es dónde termina; el 30% es
+    dónde arranca la presión.<br><br>
+    <b>El número de nodos no importa, solo el hashpower.</b> El cruce de victoria (~57%) es casi
+    idéntico al del modelo de nodos iguales, pese a que aquí Core está concentrado en pocos mineros
+    y Knots repartido en hasta 30 nodos. Tener muchos nodos Knots no ayuda a imponer el softfork si
+    no llevan la minería.<br><br>
+    <b>El desperdicio hace pico en el cruce.</b> Los bloques que Core tira son máximos <b>en la zona
+    del cruce</b> (~14/corrida a 61% de share) y bajan hacia los extremos: con Core dominante nunca
+    cede; con Knots dominante Core reorganiza seguido pero superficial.<br><br>
     <b>Método.</b> Minero elegido ponderado por su hashpower cada bloque; cada bloque de Core lleva
     datos que RDTS invalida (forzados con <code>generateblock</code>). Malla P2P completa con
     <code>whitelist=noban</code>. RDTS activo en Knots (<code>-vbparams=reduced_data:-1:…</code>).

@@ -5,6 +5,9 @@
 
 Uso:  python3 analyze.py [--depth-threshold 6]
 """
+
+import os as _os
+_ROOT = _os.environ.get("SIM_RDTS_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 import argparse
 import csv
 import json
@@ -16,7 +19,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-RES = "/Users/jmo/bitcoin/bip110/results"
+RES = _os.path.join(_ROOT, "results")
 CSV = f"{RES}/results.csv"
 
 INK = "#1f2430"

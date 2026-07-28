@@ -9,16 +9,19 @@ Cada paso añade un minero Knots grande (raw 10,15,20,25,30,35) y renormaliza.
 
 Uso:  python3 sim2.py --runs 12 --blocks 60
 """
+
+import os as _os
+_ROOT = _os.environ.get("SIM_RDTS_ROOT") or _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
 import argparse
 import csv
 import os
 import sys
 import time
 
-sys.path.insert(0, "/Users/jmo/bitcoin/bip110/sim")
+sys.path.insert(0, _os.path.join(_ROOT, "sim"))
 from orchestrator import run_weighted  # noqa: E402
 
-RESULTS = "/Users/jmo/bitcoin/bip110/results/sim2.csv"
+RESULTS = _os.path.join(_ROOT, "results/sim2.csv")
 
 BASE_CORE = [25, 20, 15, 10, 8]                     # 5 nodos Core = 78%
 BASE_KNOTS = [3, 3, 2, 2, 2] + [1] * 9 + [0.5, 0.5]  # 16 nodos Knots = 22%
