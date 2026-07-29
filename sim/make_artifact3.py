@@ -154,10 +154,15 @@ function axisX(svg,W,H,mL,mB,iw){
 
 function drawFee(){
   const svg=document.getElementById('c1');svg.innerHTML='';const W=800,H=320,mL=56,mR=20,mT=16,mB=42,iw=W-mL-mR,ih=H-mT-mB;
-  const LO=0.01,HI=20;const fee=cssv('--fee'),hair=cssv('--hair'),muted=cssv('--muted'),ref=cssv('--ref');
+  const fee=cssv('--fee'),hair=cssv('--hair'),muted=cssv('--muted'),ref=cssv('--ref');
+  const LO=0.01;
+  // techo dinámico = siguiente potencia de 10 por encima del máximo (para no cortar los picos)
+  const maxv=Math.max(1,...ROWS.map(r=>r.breakeven_fee===null?0:r.breakeven_fee));
+  const HI=Math.pow(10,Math.floor(Math.log10(maxv))+1);
   const ys=v=>{v=Math.max(v,LO);const t=(Math.log10(v)-Math.log10(LO))/(Math.log10(HI)-Math.log10(LO));return mT+(1-t)*ih;};
-  [[0.01,'1%'],[0.1,'10%'],[1,'100%'],[10,'1000%']].forEach(([v,lbl])=>{const y=ys(v);svg.appendChild(E('line',{x1:mL,y1:y,x2:W-mR,y2:y,stroke:hair,'stroke-width':1}));
-    const t=E('text',{x:mL-9,y:y+4,'text-anchor':'end',fill:muted,'font-size':11,'font-family':'ui-monospace,Menlo,monospace'});t.textContent=lbl;svg.appendChild(t);});
+  for(let e=Math.round(Math.log10(LO));e<=Math.round(Math.log10(HI));e++){const v=Math.pow(10,e);const y=ys(v);
+    svg.appendChild(E('line',{x1:mL,y1:y,x2:W-mR,y2:y,stroke:hair,'stroke-width':1}));
+    const t=E('text',{x:mL-9,y:y+4,'text-anchor':'end',fill:muted,'font-size':11,'font-family':'ui-monospace,Menlo,monospace'});t.textContent=(v*100)+'%';svg.appendChild(t);}
   svg.appendChild(E('line',{x1:mL,y1:ys(1),x2:W-mR,y2:ys(1),stroke:fee,'stroke-width':1.3,'stroke-dasharray':'2 3',opacity:.6}));
   axisX(svg,W,H,mL,mB,iw);
   const pts=ROWS.map(r=>({x:xs(r.knots_share,mL,iw),v:r.breakeven_fee,inf:r.breakeven_fee===null,r}));
