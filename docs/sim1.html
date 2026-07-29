@@ -167,14 +167,12 @@ td.num{font-family:ui-monospace,Menlo,monospace;text-align:right;font-variant-nu
     está en <b>~55% del hashpower</b> (algo por encima del 50% ingenuo): Knots necesita una leve
     supermayoría porque cada vez que su cadena limpia lidera, Core la adopta y le pone un bloque
     con datos encima, absorbiendo su ventaja. Con 80% o más del hashpower el softfork gana siempre.<br><br>
-    <b>Incentivo económico.</b> Aunque el softfork solo "gana" cerca del 55%, Core empieza a perder
-    bloques mucho antes. Contando los reemplazos de su cadena en tiempo real (1 bloque ≈ 10 minutos,
-    144 por día): con Knots al 30% del hashpower Core sufre alrededor de 0.5 reemplazos por día, al
-    55% unos 6 por día y al 80% unos 15 por día. El umbral de <b>al menos un reemplazo por día</b>
-    se cruza cerca del <b>30% del hashpower</b> — muy por debajo del 55% de la victoria. Es decir,
-    una minoría de alrededor del 30% ya impone a Core una pérdida diaria de bloques, creando
-    incentivo a <b>señalar RDTS</b> para dejar de perderlos (efecto cascada). El detalle completo,
-    en la simulación de hashpower concentrado (sim-2).<br><br>
+    <b>Incentivo económico.</b> El costo real para un minero Core es cuánto deberían pagar los datos
+    para compensar el riesgo de que su bloque quede huérfano (premio de equilibrio). Ese análisis,
+    con la orfandad <b>medida por hash</b>, está en el <b>modelo económico</b>: el premio cruza el
+    100% del premio de bloque cerca del <b>~54% de hashpower Knots</b>. <i>(Corrección: una versión
+    anterior citaba aquí un umbral de "~30%" derivado de un conteo de reorganizaciones que resultó
+    inflado por carreras de propagación entre mineros Core; se reemplazó por la medición correcta.)</i><br><br>
     <b>Método.</b> 20 nodos regtest en Docker, cada uno con 1/20 del hashpower (el minero de cada
     bloque se elige al azar). Todos los nodos conectados entre sí, con <code>whitelist=noban</code>
     para que la división sea por consenso y no por desconexión. RDTS forzado activo en Knots con
