@@ -27,9 +27,10 @@ def build():
     os.makedirs(DOCS, exist_ok=True)
     wrap(os.path.join(RESULTS, "report.html"), os.path.join(DOCS, "sim1.html"))
     wrap(os.path.join(RESULTS, "report2.html"), os.path.join(DOCS, "sim2.html"))
-    r3 = os.path.join(RESULTS, "report3.html")
-    if os.path.exists(r3):
-        wrap(r3, os.path.join(DOCS, "sim3.html"))
+    for src, dst in [("report3.html", "sim3.html"), ("report4.html", "sim4.html")]:
+        p = os.path.join(RESULTS, src)
+        if os.path.exists(p):
+            wrap(p, os.path.join(DOCS, dst))
     with open(os.path.join(DOCS, "index.html"), "w", encoding="utf-8") as f:
         f.write(INDEX)
     # .nojekyll para que Pages sirva los archivos tal cual
@@ -45,12 +46,12 @@ INDEX = r"""<!doctype html>
 <style>
 :root{
   --bg:#f4f2ec; --card:#fffdf8; --ink:#191c24; --muted:#6c7280; --hair:#e4e1d8;
-  --fork:#d61f69; --win:#1f9d57; --core:#2f6fed; --knots:#e07b0a; --fee:#c2410c;
+  --fork:#d61f69; --win:#1f9d57; --core:#2f6fed; --knots:#e07b0a; --fee:#c2410c; --topo:#0d9488;
   --shadow:0 1px 2px rgba(20,22,30,.05),0 10px 34px rgba(20,22,30,.07);
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#0f1117; --card:#1a1e28; --ink:#e9ebf2; --muted:#949bad; --hair:#262a35;
-  --fork:#f0559b; --win:#3fca82; --core:#6a9bff; --knots:#f5a03d; --fee:#fb923c;
+  --fork:#f0559b; --win:#3fca82; --core:#6a9bff; --knots:#f5a03d; --fee:#fb923c; --topo:#2dd4bf;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 38px rgba(0,0,0,.36);
 }}
 *{box-sizing:border-box}
@@ -77,6 +78,7 @@ a.card:focus-visible{outline:2px solid var(--fork);outline-offset:3px;}
 .card .go{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--fork);font-weight:600;}
 .card.win:hover{border-color:var(--win);} .card.win .go{color:var(--win);}
 .card.fee:hover{border-color:var(--fee);} .card.fee .go{color:var(--fee);}
+.card.topo:hover{border-color:var(--topo);} .card.topo .go{color:var(--topo);}
 .mech{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px 24px;
   box-shadow:var(--shadow);margin:8px 0 24px;}
 .mech h3{margin:0 0 10px;font-size:15px;}
@@ -122,6 +124,13 @@ a.card:focus-visible{outline:2px solid var(--fork);outline-offset:3px;}
       <h2>El incentivo real y la respuesta racional</h2>
       <p>Probabilidad de orfandad medida por hash → cuánto debe pagar el dato para valer la pena,
       y qué pasa cuando el minero Core simplemente deja de incluir datos.</p>
+      <div class="go">Ver dashboard →</div>
+    </a>
+    <a class="card topo" href="sim4.html">
+      <div class="tag">Experimento 4 · topología</div>
+      <h2>Cuando la topología importa más que el hashpower</h2>
+      <p>A hashpower fijo (Core 78% disperso), desconectar la red de mineros Core hace que el
+      softfork gane: el hashpower que no se puede sumar no cuenta.</p>
       <div class="go">Ver dashboard →</div>
     </a>
   </div>

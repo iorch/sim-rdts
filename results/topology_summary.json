@@ -1,0 +1,55 @@
+{
+  "rows": [
+    {
+      "core_core_prob": 0.0,
+      "runs": 8,
+      "softfork_wins": 7,
+      "p_win": 0.875,
+      "core_h": 114.2,
+      "knots_h": 111.5
+    },
+    {
+      "core_core_prob": 0.1,
+      "runs": 8,
+      "softfork_wins": 2,
+      "p_win": 0.25,
+      "core_h": 126.6,
+      "knots_h": 111.0
+    },
+    {
+      "core_core_prob": 0.25,
+      "runs": 8,
+      "softfork_wins": 0,
+      "p_win": 0.0,
+      "core_h": 136.5,
+      "knots_h": 112.8
+    },
+    {
+      "core_core_prob": 0.5,
+      "runs": 8,
+      "softfork_wins": 0,
+      "p_win": 0.0,
+      "core_h": 139.2,
+      "knots_h": 110.5
+    },
+    {
+      "core_core_prob": 0.75,
+      "runs": 8,
+      "softfork_wins": 0,
+      "p_win": 0.0,
+      "core_h": 137.0,
+      "knots_h": 112.2
+    },
+    {
+      "core_core_prob": 1.0,
+      "runs": 8,
+      "softfork_wins": 0,
+      "p_win": 0.0,
+      "core_h": 137.8,
+      "knots_h": 111.4
+    }
+  ],
+  "core_share": 0.78,
+  "core_nodes": 16,
+  "knots_nodes": 4
+}
