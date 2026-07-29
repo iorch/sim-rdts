@@ -6,12 +6,12 @@
 <style>
 :root{
   --bg:#f4f2ec; --card:#fffdf8; --ink:#191c24; --muted:#6c7280; --hair:#e4e1d8;
-  --fork:#d61f69; --win:#1f9d57; --core:#2f6fed; --knots:#e07b0a;
+  --fork:#d61f69; --win:#1f9d57; --core:#2f6fed; --knots:#e07b0a; --fee:#c2410c; --topo:#0d9488;
   --shadow:0 1px 2px rgba(20,22,30,.05),0 10px 34px rgba(20,22,30,.07);
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#0f1117; --card:#1a1e28; --ink:#e9ebf2; --muted:#949bad; --hair:#262a35;
-  --fork:#f0559b; --win:#3fca82; --core:#6a9bff; --knots:#f5a03d;
+  --fork:#f0559b; --win:#3fca82; --core:#6a9bff; --knots:#f5a03d; --fee:#fb923c; --topo:#2dd4bf;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 38px rgba(0,0,0,.36);
 }}
 *{box-sizing:border-box}
@@ -26,8 +26,7 @@ h1{font-size:clamp(30px,6vw,50px);line-height:1.06;margin:.6rem 0 .4rem;letter-s
   font-weight:780;text-wrap:balance;}
 .lede{font-size:clamp(15px,2.3vw,18px);color:var(--muted);max-width:62ch;}
 .lede b{color:var(--ink);}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:34px 0 24px;}
-@media(max-width:600px){.cards{grid-template-columns:1fr}}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:16px;margin:34px 0 24px;}
 a.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--hair);
   border-radius:16px;padding:22px 22px 20px;box-shadow:var(--shadow);transition:transform .12s,border-color .12s;}
 a.card:hover{transform:translateY(-3px);border-color:var(--fork);}
@@ -37,7 +36,9 @@ a.card:focus-visible{outline:2px solid var(--fork);outline-offset:3px;}
 .card h2{font-size:19px;margin:8px 0 6px;letter-spacing:-.01em;}
 .card p{font-size:13.5px;color:var(--muted);margin:0 0 12px;}
 .card .go{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--fork);font-weight:600;}
-.card.win .go,.card.win:hover{border-color:var(--win);} .card.win .go{color:var(--win);}
+.card.win:hover{border-color:var(--win);} .card.win .go{color:var(--win);}
+.card.fee:hover{border-color:var(--fee);} .card.fee .go{color:var(--fee);}
+.card.topo:hover{border-color:var(--topo);} .card.topo .go{color:var(--topo);}
 .mech{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px 24px;
   box-shadow:var(--shadow);margin:8px 0 24px;}
 .mech h3{margin:0 0 10px;font-size:15px;}
@@ -73,9 +74,23 @@ a.card:focus-visible{outline:2px solid var(--fork);outline-offset:3px;}
     </a>
     <a class="card win" href="sim2.html">
       <div class="tag">Experimento 2 · hashpower concentrado</div>
-      <h2>Nodos vs hashpower + incentivo</h2>
-      <p>Core en pocos mineros grandes vs Knots disperso. ¿Importa el número de nodos? ¿Cada
-      cuánto pierde bloques Core?</p>
+      <h2>Nodos frente a hashpower</h2>
+      <p>Core en pocos mineros grandes frente a Knots disperso. ¿Importa el número de nodos?
+      ¿Cada cuánto pierde bloques Core?</p>
+      <div class="go">Ver dashboard →</div>
+    </a>
+    <a class="card fee" href="sim3.html">
+      <div class="tag">Experimento 3 · modelo económico</div>
+      <h2>El incentivo real y la respuesta racional</h2>
+      <p>Probabilidad de orfandad medida por hash → cuánto debe pagar el dato para valer la pena,
+      y qué pasa cuando el minero Core simplemente deja de incluir datos.</p>
+      <div class="go">Ver dashboard →</div>
+    </a>
+    <a class="card topo" href="sim4.html">
+      <div class="tag">Experimento 4 · topología</div>
+      <h2>Cuando la topología importa más que el hashpower</h2>
+      <p>A hashpower fijo (Core 78% disperso), desconectar la red de mineros Core hace que el
+      softfork gane: el hashpower que no se puede sumar no cuenta.</p>
       <div class="go">Ver dashboard →</div>
     </a>
   </div>
@@ -100,13 +115,13 @@ a.card:focus-visible{outline:2px solid var(--fork);outline-offset:3px;}
   </div>
 
   <p class="foot">
-    <b>Hallazgos.</b> Lo decisivo es el <b>cruce de incentivos, no el de la victoria</b>: Core empieza
-    a perder <b>al menos un bloque por día</b> por reorganización desde apenas <b>~30% del hashpower
-    de Knots</b> — mucho antes del <b>~55-57%</b> en que el softfork realmente gana. Esa pérdida
-    diaria le da a un minero Core incentivo a <b>señalar RDTS</b> para dejar de perder bloques,
-    empujando el hashpower hacia arriba (efecto cascada). Además: el fork es de consenso (no solo de
-    retransmisión), y <b>el número de nodos no importa</b> — solo el hashpower (Knots con 16 a 30
-    nodos pierde igual por debajo del umbral).<br><br>
+    <b>Hallazgos.</b> El fork es de consenso (no solo de retransmisión) y <b>lo decide el hashpower,
+    no el número de nodos</b> (Knots con 16 a 30 nodos pierde igual por debajo del umbral). El
+    softfork "gana" una guerra de reorganizaciones con una leve supermayoría (~55-57%), pero el
+    <b>incentivo real llega mucho antes</b>: cuando la probabilidad de que un bloque con datos quede
+    huérfano deja de ser despreciable, incluir datos deja de ser rentable. La respuesta racional del
+    minero Core no es "señalar RDTS" sino, más simple, <b>dejar de incluir datos</b> — y cuando lo
+    hace, la cadena converge sola (Experimento 3).<br><br>
     Código y datos: <a href="https://github.com/iorch/sim-rdts">github.com/iorch/sim-rdts</a> ·
     reproducible con <code>docker</code> + <code>python3</code>.
   </p>

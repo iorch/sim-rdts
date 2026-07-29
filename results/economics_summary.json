@@ -1,0 +1,104 @@
+{
+  "rows": [
+    {
+      "knots_share": 0.22,
+      "orphan_rate": 0.0,
+      "breakeven_fee": 0.0,
+      "baseline_converge": 0.0,
+      "adaptive_converge": 0.0,
+      "adaptive_gaveup": 0.17,
+      "n_base": 8,
+      "n_adap": 6
+    },
+    {
+      "knots_share": 0.2909,
+      "orphan_rate": 0.052,
+      "breakeven_fee": 0.055,
+      "baseline_converge": 0.0,
+      "adaptive_converge": 0.0,
+      "adaptive_gaveup": 1,
+      "n_base": 8,
+      "n_adap": 3
+    },
+    {
+      "knots_share": 0.376,
+      "orphan_rate": 0.023,
+      "breakeven_fee": 0.024,
+      "baseline_converge": 0.0,
+      "adaptive_converge": null,
+      "adaptive_gaveup": null,
+      "n_base": 8,
+      "n_adap": 0
+    },
+    {
+      "knots_share": 0.4621,
+      "orphan_rate": 0.187,
+      "breakeven_fee": 0.23,
+      "baseline_converge": 0.125,
+      "adaptive_converge": null,
+      "adaptive_gaveup": null,
+      "n_base": 8,
+      "n_adap": 0
+    },
+    {
+      "knots_share": 0.5412,
+      "orphan_rate": 0.525,
+      "breakeven_fee": 1.104,
+      "baseline_converge": 0.375,
+      "adaptive_converge": null,
+      "adaptive_gaveup": null,
+      "n_base": 8,
+      "n_adap": 0
+    },
+    {
+      "knots_share": 0.61,
+      "orphan_rate": 0.791,
+      "breakeven_fee": 3.784,
+      "baseline_converge": 0.75,
+      "adaptive_converge": null,
+      "adaptive_gaveup": null,
+      "n_base": 8,
+      "n_adap": 0
+    },
+    {
+      "knots_share": 0.6681,
+      "orphan_rate": 0.839,
+      "breakeven_fee": 5.219,
+      "baseline_converge": 0.875,
+      "adaptive_converge": null,
+      "adaptive_gaveup": null,
+      "n_base": 8,
+      "n_adap": 0
+    },
+    {
+      "knots_share": 0.7214,
+      "orphan_rate": 0.988,
+      "breakeven_fee": 79.0,
+      "baseline_converge": 1.0,
+      "adaptive_converge": null,
+      "adaptive_gaveup": null,
+      "n_base": 8,
+      "n_adap": 0
+    },
+    {
+      "knots_share": 0.7706,
+      "orphan_rate": 0.889,
+      "breakeven_fee": 8.0,
+      "baseline_converge": 0.875,
+      "adaptive_converge": null,
+      "adaptive_gaveup": null,
+      "n_base": 8,
+      "n_adap": 0
+    },
+    {
+      "knots_share": 0.8165,
+      "orphan_rate": 0.956,
+      "breakeven_fee": 21.857,
+      "baseline_converge": 1.0,
+      "adaptive_converge": null,
+      "adaptive_gaveup": null,
+      "n_base": 8,
+      "n_adap": 0
+    }
+  ]
+}
