@@ -21,8 +21,8 @@ def build():
         ("El incentivo real", "premio = p/(1−p)",
          "cuánto debe pagar el dato (como fracción del premio de bloque) para valer el riesgo de orfandad p"),
         ("Respuesta racional", "dejar de incluir datos",
-         "no 'señalar RDTS': el minero Core que pierde bloques simplemente deja de incluir datos, y la "
-         "cadena converge sola"),
+         "no 'señalar RDTS': el minero Core que pierde bloques deja de incluir datos — pero solo "
+         "reacciona una vez que Knots ya lo orfana, así que refuerza el desenlace, no lo adelanta"),
     ]
     stat_html = "\n".join(
         f'<div class="tile"><div class="tile-label">{a}</div>'
@@ -84,6 +84,7 @@ a.back{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--fee);
     <span class="chip"><b>Core</b> 31.1</span>
     <span class="chip"><b>Knots</b> v29.3.knots20260508</span>
     <span class="chip">modelo v2 · orfandad medida por hash</span>
+    <span class="chip">baseline 8 · adaptativo 3 corridas/punto</span>
   </div>
 
   <div class="grid">__STATS__</div>
@@ -101,8 +102,10 @@ a.back{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--fee);
     <h2>La respuesta racional: dejar de incluir datos</h2>
     <p class="sub">Probabilidad de que la cadena converja (sin fork persistente). <b>Spamea siempre</b>:
     Core incluye datos en todos sus bloques (supuesto original). <b>Deja de spamear</b>: un minero
-    Core que ve un bloque suyo huérfano deja de incluir datos. Con esta respuesta racional la cadena
-    converge mucho antes — no hace falta que el softfork "gane" una guerra de reorganizaciones.</p>
+    Core que ve un bloque suyo huérfano deja de incluir datos. <b>Resultado (contraintuitivo):</b>
+    las dos curvas van casi juntas — dejar de spamear NO adelanta la convergencia, porque un minero
+    solo se rinde <i>después</i> de que le orfanan un bloque, y eso solo pasa cuando Knots ya va
+    ganando. La respuesta racional refuerza el desenlace donde Knots ya domina; no lo crea antes.</p>
     <div class="chart-wrap" id="w2"><svg id="c2" viewBox="0 0 800 320" preserveAspectRatio="xMidYMid meet"></svg><div class="tooltip" id="t2"></div></div>
     <div class="legend">
       <span><span class="sw" style="background:var(--base)"></span>Core spamea siempre</span>
@@ -119,11 +122,17 @@ a.back{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--fee);
   </div>
 
   <p class="foot">
-    <b>Qué cambia respecto de la lectura anterior.</b> El incentivo no es "señalar RDTS" sino, más
-    simple y más barato, <b>dejar de incluir datos</b>. Ese incentivo aparece donde el premio de
-    equilibrio se dispara, es decir donde la probabilidad de orfandad deja de ser despreciable —
-    bastante antes del umbral en que el softfork ganaría una guerra de reorganizaciones. La
-    simulación adaptativa lo confirma: cuando los mineros Core reaccionan, la cadena converge sola.<br><br>
+    <b>El incentivo real es económico, no "señalar RDTS".</b> Un minero Core deja de incluir datos
+    cuando el <b>premio de equilibrio</b> (lo que el dato debería pagar para compensar el riesgo de
+    orfandad) supera lo que el dato realmente paga. Ese premio cruza el 100% del premio de bloque a
+    <b>~54% de hashpower Knots</b> y se dispara desde ahí — arriba de eso, ningún fee razonable lo
+    justifica.<br><br>
+    <b>Y un resultado honesto que corrige la intuición.</b> Simular que los mineros Core
+    <i>reaccionan</i> (dejan de spamear tras ser orfanados) no adelanta el desenlace: la curva
+    adaptativa casi coincide con la de "spamea siempre". Un minero solo se rinde después de perder un
+    bloque, y eso ocurre cuando Knots ya va ganando. La reacción racional <b>refuerza</b> el
+    resultado, pero el que manda es el <b>premio de equilibrio</b> — el precio del dato frente al
+    riesgo de orfandad.<br><br>
     <b>Honestidad.</b> Sigue siendo regtest (dificultad fija, sin latencia real). El premio de
     equilibrio supone que un bloque huérfano se pierde por completo y que un bloque limpio nunca se
     orfana; no modela comisiones absolutas ni minería estratégica. Es el incentivo de primer orden,
