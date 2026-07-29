@@ -311,13 +311,18 @@ def run_once(n_knots, blocks=60, p_spam=1.0, seed=0, spam_kind="random", keep=Fa
 
 
 def run_weighted(kinds, weights, scenario_id, blocks=60, p_spam=1.0, seed=0,
-                 spam_kind="random", keep=False, adaptive=False, core_core_prob=1.0):
+                 spam_kind="random", keep=False, adaptive=False, core_core_prob=1.0,
+                 no_spam_core=None):
     """sim-2: red con hashpower heterogéneo (kinds[] + weights[] explícitos).
     adaptive=True: un minero Core deja de incluir datos tras ver un bloque suyo huérfano.
-    core_core_prob<1: se eliminan enlaces Core-Core (Core queda detrás de relays Knots)."""
+    core_core_prob<1: se eliminan enlaces Core-Core (Core queda detrás de relays Knots).
+    no_spam_core: índices de nodos Core que NUNCA incluyen datos desde el inicio (adopción por
+      POLICY — siguen siendo Core, aceptan spam y la cadena spam; no enforzan RDTS)."""
     net = Network(0, scenario_id, kinds=kinds, weights=weights)
     net.adaptive = adaptive
     net.core_core_prob = core_core_prob
+    if no_spam_core:
+        net.core_gaveup = set(no_spam_core)   # policy fija desde el arranque (no dinámica)
     return _drive(net, blocks, p_spam, seed, spam_kind, keep)
 
 
