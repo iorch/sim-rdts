@@ -58,6 +58,7 @@ class Network:
         self.nodes = []
         self.adaptive = False       # si True, un minero Core deja de incluir datos tras sufrir orfandad
         self.core_gaveup = set()    # índices de nodos Core que ya dejaron de spamear
+        self.core_core_prob = 1.0   # fracción de enlaces Core-Core presentes (1 = malla, 0 = Core aislado tras Knots)
 
     def start(self):
         ensure_network()
@@ -85,15 +86,29 @@ class Network:
     def teardown(self):
         self._teardown_silent()
 
-    # -- topología P2P: malla completa (una dirección por par basta, la conexión es bidireccional)
-    def connect_mesh(self):
+    def _addnode(self, i, j):
+        peer = f"{container_name(self.run_id, j)}:18444"
+        try:
+            self.nodes[i].call("addnode", peer, "add", True)
+        except RPCError:
+            self.nodes[i].call("addnode", peer, "add")
+
+    # -- topología P2P. Por defecto malla completa (core_core_prob=1 → la topología no importa).
+    # Con core_core_prob<1 se ELIMINAN enlaces Core-Core: los nodos Core quedan conectados a la red
+    # solo a través de Knots. Como Knots NO retransmite bloques inválidos por RDTS, los bloques con
+    # datos no pueden saltar de un Core a otro → la minería Core se fragmenta. Los enlaces
+    # Knots-Knots y Core-Knots siempre están (el bando Knots queda bien conectado y Core sincroniza
+    # la cadena limpia). Una dirección por par basta (la conexión es bidireccional).
+    def connect_topology(self, rng, core_core_prob=1.0):
         for i in range(self.n):
             for j in range(i + 1, self.n):
-                peer = f"{container_name(self.run_id, j)}:18444"
-                try:
-                    self.nodes[i].call("addnode", peer, "add", True)
-                except RPCError:
-                    self.nodes[i].call("addnode", peer, "add")
+                both_core = self.kinds[i] == "core" and self.kinds[j] == "core"
+                if both_core and rng.random() >= core_core_prob:
+                    continue  # enlace Core-Core ausente
+                self._addnode(i, j)
+
+    def connect_mesh(self, rng=None):
+        self.connect_topology(rng or random.Random(0), core_core_prob=1.0)
 
     # -- wallets + reparto de fondos para poder construir spam desde cualquier nodo Core
     def bootstrap(self):
@@ -113,6 +128,27 @@ class Network:
 
     def _settle(self, secs):
         time.sleep(secs)
+
+    def sync_factions(self, timeout=5.0, poll=0.1):
+        """Espera a que TODOS los nodos Core compartan la misma punta y TODOS los Knots la suya
+        (propagación completa dentro de cada bando). Así el próximo minero construye sobre la
+        punta acordada de su bando, y no sobre una rezagada — evita orfandad por carreras de
+        propagación entre mineros del mismo bando (artefacto), dejando solo la orfandad real por
+        el fork Core↔Knots. Devuelve True si convergió antes del timeout."""
+        core = [n for n in self.nodes if n.kind == "core"]
+        knots = [n for n in self.nodes if n.kind == "knots"]
+        deadline = time.time() + timeout
+        time.sleep(poll)
+        while time.time() < deadline:
+            try:
+                core_ok = len({n.call("getbestblockhash") for n in core}) <= 1
+                knots_ok = len({n.call("getbestblockhash") for n in knots}) <= 1
+            except RPCError:
+                core_ok = knots_ok = False
+            if core_ok and knots_ok:
+                return True
+            time.sleep(poll)
+        return False
 
     def mine_round(self, idx, p_spam, rng, spam_kind):
         """El nodo idx mina 1 bloque. Core con probabilidad p_spam mina un bloque con datos,
@@ -184,7 +220,7 @@ def _drive(net, blocks, p_spam, seed, spam_kind, keep):
     t0 = time.time()
     try:
         net.start()
-        net.connect_mesh()
+        net.connect_topology(rng, core_core_prob=net.core_core_prob)
         net.bootstrap()
         events = {"spam": 0, "clean": 0, "clean_fallback": 0}
         node_ids = range(net.n)
@@ -212,7 +248,9 @@ def _drive(net, blocks, p_spam, seed, spam_kind, keep):
                 spam_hashes[bhash] = midx
             events[kind if kind in events else "clean"] = events.get(
                 kind if kind in events else "clean", 0) + 1
-            net._settle(0.35)                   # propagación P2P (localhost)
+            # esperar convergencia de propagación por bando (acotado: bajo topología fragmentada
+            # el bando Core NO converge —ese es el fenómeno— así que el tope evita que cuelgue)
+            net.sync_factions(timeout=1.5)
             if rep:
                 cur = rep.call("getbestblockhash")
                 if cur != prev_tip:
@@ -237,7 +275,8 @@ def _drive(net, blocks, p_spam, seed, spam_kind, keep):
                     for h, mi in spam_hashes.items():
                         if mi not in net.core_gaveup and orphaned(h):
                             net.core_gaveup.add(mi)
-        net._settle(3.0)                        # asentamiento final
+        net._settle(1.0)                        # asentamiento final
+        net.sync_factions(timeout=3.0)
         tot = sum(net.weights)
         knots_share = sum(w for w, k in zip(net.weights, net.kinds) if k == "knots") / tot
         m = net.measure()
@@ -258,6 +297,7 @@ def _drive(net, blocks, p_spam, seed, spam_kind, keep):
                   "orphan_rate": round(orphan_rate, 4),
                   "breakeven_fee": (round(breakeven_fee, 4) if breakeven_fee != float("inf") else None),
                   "core_gaveup": len(net.core_gaveup), "adaptive": net.adaptive,
+                  "core_core_prob": net.core_core_prob,
                   "secs": round(time.time() - t0, 1)})
         return m
     finally:
@@ -271,11 +311,13 @@ def run_once(n_knots, blocks=60, p_spam=1.0, seed=0, spam_kind="random", keep=Fa
 
 
 def run_weighted(kinds, weights, scenario_id, blocks=60, p_spam=1.0, seed=0,
-                 spam_kind="random", keep=False, adaptive=False):
+                 spam_kind="random", keep=False, adaptive=False, core_core_prob=1.0):
     """sim-2: red con hashpower heterogéneo (kinds[] + weights[] explícitos).
-    adaptive=True: un minero Core deja de incluir datos tras ver un bloque suyo huérfano."""
+    adaptive=True: un minero Core deja de incluir datos tras ver un bloque suyo huérfano.
+    core_core_prob<1: se eliminan enlaces Core-Core (Core queda detrás de relays Knots)."""
     net = Network(0, scenario_id, kinds=kinds, weights=weights)
     net.adaptive = adaptive
+    net.core_core_prob = core_core_prob
     return _drive(net, blocks, p_spam, seed, spam_kind, keep)
 
 
