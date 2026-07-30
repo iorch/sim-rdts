@@ -74,6 +74,16 @@ th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--mu
       <th>Hashpower adoptado</th><th class="num">Consenso: gana</th><th class="num">Policy: gana</th>
       <th class="num">Knots share (consenso)</th><th class="num">Knots share (policy)</th>
     </tr></thead><tbody id="tb"></tbody></table></div>
+    <p style="color:var(--muted);font-size:13px;line-height:1.6;margin-top:16px;">
+      <b>Cómo leerla — la clave son las dos últimas columnas.</b> <b>Hashpower adoptado</b> = la
+      fracción del hashpower de Core que cambia de comportamiento. Bajo <b>consenso</b> ese hashpower
+      <b>pasa a Knots</b>, así que "Knots share (consenso)" <b>sube</b> (22→100%) y el softfork gana al
+      cruzar la mayoría (desde 33% adoptado → Knots 55%). Bajo <b>policy</b> el minero <b>sigue siendo
+      Core</b> (solo deja de meter datos), así que "Knots share (policy)" se queda <b>clavado en 22%</b>
+      y el softfork no gana... hasta el 78% (todos): ahí gana no porque el poder cambie de bando, sino
+      porque <b>ya nadie produce spam</b> — no hay cadena que rechazar. Que "Knots share" suba (consenso)
+      o no (policy) es la prueba de que <b>no son equivalentes</b>.
+    </p>
   </div>
 
   <p class="foot">
