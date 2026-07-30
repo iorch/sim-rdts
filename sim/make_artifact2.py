@@ -34,14 +34,14 @@ def build():
     peak = max(rows, key=lambda r: r["disc_mean"])
 
     stats = [
-        ("Umbral de incentivo", inc_share,
-         "hashpower de Knots donde Core ya pierde al menos un bloque por día por reorganización → le conviene señalar RDTS"),
-        ("Umbral de victoria", "~57%",
-         "hashpower donde el softfork ya gana (Core reorganiza hacia la cadena limpia) — mucho después del incentivo"),
         ("El número de nodos no manda", "16→26",
-         "Knots corre en muchos más nodos que Core y aun así pierde por debajo del umbral de hashpower"),
+         "Knots corre en muchos más nodos que Core y aun así pierde por debajo del umbral de hashpower — lo que decide es el hashpower"),
+        ("Umbral de victoria", "~57%",
+         "hashpower Knots donde el softfork ya gana (Core reorganiza hacia la cadena limpia y descarta su spam)"),
+        ("Core pierde ≥1 bloque/día desde", inc_share,
+         "hashpower donde la cadena de Core es reemplazada al menos una vez al día (frecuencia). La lectura económica —cuánto debe pagar el dato— está en el Experimento 3"),
         ("Pico de desperdicio", f"{peak['disc_mean']:.0f} bloques",
-         f"máximo de bloques que descarta Core, justo en el cruce ({peak['knots_share']*100:.0f}% del hashpower)"),
+         f"máximo de bloques que descarta Core, cerca del cruce ({peak['knots_share']*100:.0f}% del hashpower)"),
     ]
     stat_html = "\n".join(
         f'<div class="tile"><div class="tile-label">{a}</div>'
@@ -180,19 +180,20 @@ td.num{font-family:ui-monospace,Menlo,monospace;text-align:right;font-variant-nu
   </div>
 
   <div class="card">
-    <h2>Incentivo económico: ¿cada cuánto reemplazan la cadena de Core?</h2>
+    <h2>Frecuencia de reemplazo de la cadena de Core</h2>
     <p class="sub">Cada reorganización = la cadena de Core (con datos) reemplazada por la limpia de
-    Knots → Core pierde esos bloques. En tiempo real (1 bloque ≈ 10 minutos, 144 por día). Cuando pasa
-    <b>≥1 vez al día</b>, un minero Core tiene incentivo diario a señalar RDTS para dejar de
-    perder bloques. La franja marca ese umbral; la línea de puntos, el 50% del hashpower.</p>
+    Knots → Core pierde esos bloques. En tiempo real (1 bloque ≈ 10 minutos, 144 por día). La franja
+    marca <b>≥1 reemplazo por día</b>; la línea de puntos, el 50% del hashpower. Es una <b>frecuencia</b>,
+    no el incentivo económico — ese (cuánto debería pagar el dato para valer el riesgo) está en el
+    <a href="sim3.html" style="color:var(--discard)">Experimento 3</a>.</p>
     <div class="chart-wrap" id="w3">
       <svg id="c3" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet"></svg>
       <div class="tooltip" id="t3"></div>
     </div>
     <p class="split-note" style="border-left:3px solid var(--discard);padding-left:14px;margin-top:14px;color:var(--muted);font-size:13.5px;">
-      El <b>umbral de incentivo (~30%)</b> llega mucho antes que el <b>de victoria (~57%)</b>:
-      Core sangra bloques a diario desde que Knots tiene ~30% del hashpower, empujando a los
-      mineros a señalar RDTS — efecto cascada hacia el umbral de victoria.</p>
+      Core empieza a perder <b>≥1 bloque por día</b> por reorganización desde ~38% de hashpower Knots,
+      antes del umbral de victoria (~57%). Que un minero <i>reaccione</i> a esa pérdida — y si le
+      conviene por policy o por consenso — se analiza en los Experimentos 3 y 5.</p>
   </div>
 
   <div class="card">
@@ -219,21 +220,20 @@ td.num{font-family:ui-monospace,Menlo,monospace;text-align:right;font-variant-nu
   </div>
 
   <p class="foot">
-    <b>Conclusión — el cruce que importa es el de los incentivos (~30%), no el de la victoria (~57%).</b>
-    El softfork solo "gana" (Core reorganiza a la cadena limpia) con una leve supermayoría de
-    ~57% del hashpower. Pero <b>mucho antes de eso Core ya está perdiendo bloques</b>: desde apenas
-    <b>~30% de hashpower en Knots</b>, Core sufre <b>≥1 reemplazo de cadena por día</b>. Ese es el
-    umbral accionable: a un minero Core racional le empieza a convenir <b>señalar RDTS</b> para dejar
-    de perder bloques mucho antes de que el softfork sea mayoría — y al hacerlo empuja el share hacia
-    arriba, realimentando el proceso (<b>efecto cascada</b>). El 57% es dónde termina; el 30% es
-    dónde arranca la presión.<br><br>
-    <b>El número de nodos no importa, solo el hashpower.</b> El cruce de victoria (~57%) es casi
-    idéntico al del modelo de nodos iguales, pese a que aquí Core está concentrado en pocos mineros
-    y Knots repartido en hasta 30 nodos. Tener muchos nodos Knots no ayuda a imponer el softfork si
-    no llevan la minería.<br><br>
-    <b>El desperdicio hace pico en el cruce.</b> Los bloques que Core tira son máximos <b>en la zona
-    del cruce</b> (aproximadamente 14 bloques por corrida a 61% del hashpower) y bajan hacia los
-    extremos: con Core dominante nunca cede; con Knots dominante Core reorganiza seguido pero superficial.<br><br>
+    <b>El número de nodos no importa, solo el hashpower.</b> Es el resultado central: el cruce de
+    victoria (~57%) es casi idéntico al del modelo de nodos iguales, pese a que aquí Core está
+    concentrado en pocos mineros y Knots repartido en hasta 30 nodos. Tener muchos nodos Knots no
+    ayuda a imponer el softfork si no llevan la minería.<br><br>
+    <b>Frecuencia de reemplazo.</b> Antes del umbral de victoria, Core ya pierde bloques por
+    reorganización: <b>≥1 por día desde ~38% de hashpower Knots</b>. Es una frecuencia — la
+    interpretación económica (cuánto debería pagar el dato para compensar ese riesgo: premio de
+    equilibrio, que cruza el 100% del premio de bloque a ~54%) está en el
+    <a href="sim3.html" style="color:var(--knots)">Experimento 3</a>, y si a un minero le conviene
+    reaccionar por <i>policy</i> o por <i>consenso</i>, en el
+    <a href="sim5.html" style="color:var(--knots)">Experimento 5</a>.<br><br>
+    <b>El desperdicio hace pico cerca del cruce.</b> Los bloques que Core tira son máximos alrededor
+    del cruce (~13-14 por corrida a ~61% del hashpower) y bajan hacia los extremos: con Core dominante
+    nunca cede; con Knots dominante Core reorganiza seguido pero superficial.<br><br>
     <b>Método.</b> El minero de cada bloque se elige al azar, con probabilidad proporcional a su
     hashpower; cada bloque de Core lleva datos que RDTS invalida (forzados con
     <code>generateblock</code>). Todos los nodos conectados entre sí, con <code>whitelist=noban</code>
@@ -304,7 +304,7 @@ function drawIncentive(){
   // franja de incentivo (al menos 1 por día)
   svg.appendChild(E('rect',{x:mL,y:mT,width:iw,height:ys(1)-mT,fill:disc,opacity:0.07}));
   svg.appendChild(E('line',{x1:mL,y1:ys(1),x2:W-mR,y2:ys(1),stroke:disc,'stroke-width':1.5,'stroke-dasharray':'2 3'}));
-  const lab=E('text',{x:W-mR,y:ys(1)-6,'text-anchor':'end',fill:disc,'font-size':11});lab.textContent='≥ 1 reemplazo por día → incentivo a señalar RDTS';svg.appendChild(lab);
+  const lab=E('text',{x:W-mR,y:ys(1)-6,'text-anchor':'end',fill:disc,'font-size':11});lab.textContent='≥ 1 reemplazo de cadena por día';svg.appendChild(lab);
   svg.appendChild(E('line',{x1:xs(50),y1:mT,x2:xs(50),y2:mT+ih,stroke:ref,'stroke-width':1.5,'stroke-dasharray':'5 4'}));
   for(let s=20;s<=90;s+=10){const t=E('text',{x:xs(s),y:H-mB+20,'text-anchor':'middle',fill:muted,'font-size':11,'font-family':'ui-monospace,Menlo,monospace'});t.textContent=s+'%';svg.appendChild(t);}
   const xl=E('text',{x:mL+iw/2,y:H-3,'text-anchor':'middle',fill:muted,'font-size':12});xl.textContent='Hashpower de Knots (%)';svg.appendChild(xl);

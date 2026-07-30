@@ -10,11 +10,11 @@
       "p_win": 0.0,
       "ci_lo": 0,
       "ci_hi": 0.16113012549493322,
-      "reorgs_mean": 0.05,
+      "reorgs_mean": 0,
       "reorgs_med": 0.0,
-      "disc_mean": 0.05,
+      "disc_mean": 0,
       "disc_med": 0.0,
-      "depth_mean": 35.8
+      "depth_mean": 35.9
     },
     {
       "step": 1,
@@ -26,11 +26,11 @@
       "p_win": 0.0,
       "ci_lo": 0,
       "ci_hi": 0.16113012549493322,
-      "reorgs_mean": 0.35,
+      "reorgs_mean": 0.15,
       "reorgs_med": 0.0,
-      "disc_mean": 0.75,
+      "disc_mean": 0.65,
       "disc_med": 0.0,
-      "depth_mean": 29.9
+      "depth_mean": 29.7
     },
     {
       "step": 2,
@@ -38,15 +38,15 @@
       "core_share": 0.624,
       "n_nodes": 23,
       "runs": 20,
-      "wins": 1,
-      "p_win": 0.05,
-      "ci_lo": 0.008881219432873136,
-      "ci_hi": 0.23613589351256675,
-      "reorgs_mean": 0.35,
+      "wins": 2,
+      "p_win": 0.1,
+      "ci_lo": 0.027865893984153206,
+      "ci_hi": 0.30103820641179335,
+      "reorgs_mean": 0.5,
       "reorgs_med": 0.0,
-      "disc_mean": 1.9,
+      "disc_mean": 3.4,
       "disc_med": 0.0,
-      "depth_mean": 26.3
+      "depth_mean": 24.5
     },
     {
       "step": 3,
@@ -54,15 +54,15 @@
       "core_share": 0.5379,
       "n_nodes": 24,
       "runs": 20,
-      "wins": 2,
-      "p_win": 0.1,
-      "ci_lo": 0.027865893984153206,
-      "ci_hi": 0.30103820641179335,
-      "reorgs_mean": 1.6,
-      "reorgs_med": 1.0,
-      "disc_mean": 5.25,
-      "disc_med": 3.0,
-      "depth_mean": 18.4
+      "wins": 0,
+      "p_win": 0.0,
+      "ci_lo": 0,
+      "ci_hi": 0.16113012549493322,
+      "reorgs_mean": 1,
+      "reorgs_med": 0.0,
+      "disc_mean": 2.25,
+      "disc_med": 0.0,
+      "depth_mean": 21.4
     },
     {
       "step": 4,
@@ -70,15 +70,15 @@
       "core_share": 0.4588,
       "n_nodes": 25,
       "runs": 20,
-      "wins": 4,
-      "p_win": 0.2,
-      "ci_lo": 0.0806563532712,
-      "ci_hi": 0.41602172202575993,
-      "reorgs_mean": 2.35,
-      "reorgs_med": 2.0,
-      "disc_mean": 7.85,
-      "disc_med": 6.5,
-      "depth_mean": 14.2
+      "wins": 5,
+      "p_win": 0.25,
+      "ci_lo": 0.11186005278940309,
+      "ci_hi": 0.4687050099580636,
+      "reorgs_mean": 2.55,
+      "reorgs_med": 3.0,
+      "disc_mean": 7.9,
+      "disc_med": 5.0,
+      "depth_mean": 13.6
     },
     {
       "step": 5,
@@ -86,15 +86,15 @@
       "core_share": 0.39,
       "n_nodes": 26,
       "runs": 20,
-      "wins": 17,
-      "p_win": 0.85,
-      "ci_lo": 0.6395767041130426,
-      "ci_hi": 0.9476322080405041,
-      "reorgs_mean": 5,
-      "reorgs_med": 5.0,
-      "disc_mean": 14.65,
-      "disc_med": 15.5,
-      "depth_mean": 2.5
+      "wins": 15,
+      "p_win": 0.75,
+      "ci_lo": 0.5312949900419365,
+      "ci_hi": 0.888139947210597,
+      "reorgs_mean": 4.5,
+      "reorgs_med": 4.0,
+      "disc_mean": 13.25,
+      "disc_med": 14.0,
+      "depth_mean": 4.2
     },
     {
       "step": 6,
@@ -102,15 +102,15 @@
       "core_share": 0.3319,
       "n_nodes": 27,
       "runs": 20,
-      "wins": 14,
-      "p_win": 0.7,
-      "ci_lo": 0.4810232237710206,
-      "ci_hi": 0.854524726031006,
-      "reorgs_mean": 4.6,
-      "reorgs_med": 4.0,
-      "disc_mean": 11.4,
-      "disc_med": 11.0,
-      "depth_mean": 3.8
+      "wins": 16,
+      "p_win": 0.8,
+      "ci_lo": 0.5839782779742401,
+      "ci_hi": 0.9193436467288,
+      "reorgs_mean": 4.65,
+      "reorgs_med": 4.5,
+      "disc_mean": 11.45,
+      "disc_med": 11.5,
+      "depth_mean": 3.1
     },
     {
       "step": 7,
@@ -122,11 +122,11 @@
       "p_win": 0.85,
       "ci_lo": 0.6395767041130426,
       "ci_hi": 0.9476322080405041,
-      "reorgs_mean": 5.25,
-      "reorgs_med": 5.0,
-      "disc_mean": 10.3,
+      "reorgs_mean": 4.9,
+      "reorgs_med": 4.5,
+      "disc_mean": 10.25,
       "disc_med": 10.0,
-      "depth_mean": 1.9
+      "depth_mean": 1.8
     },
     {
       "step": 8,
@@ -138,27 +138,11 @@
       "p_win": 1.0,
       "ci_lo": 0.8318156346315496,
       "ci_hi": 1,
-      "reorgs_mean": 4.95,
+      "reorgs_mean": 5.11,
       "reorgs_med": 5,
-      "disc_mean": 9.11,
+      "disc_mean": 8.79,
       "disc_med": 9,
-      "depth_mean": 0.8
-    },
-    {
-      "step": 9,
-      "knots_share": 0.8165,
-      "core_share": 0.1835,
-      "n_nodes": 30,
-      "runs": 20,
-      "wins": 20,
-      "p_win": 1.0,
-      "ci_lo": 0.8388698745050667,
-      "ci_hi": 1,
-      "reorgs_mean": 4.85,
-      "reorgs_med": 5.0,
-      "disc_mean": 7.25,
-      "disc_med": 7.5,
-      "depth_mean": 0.2
+      "depth_mean": 0.4
     }
   ]
 }

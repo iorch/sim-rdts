@@ -91,13 +91,13 @@ td.num{font-family:ui-monospace,Menlo,monospace;text-align:right;font-variant-nu
     <span class="chip"><b>Core</b> 31.1</span>
     <span class="chip"><b>Knots</b> v29.3.knots20260508</span>
     <span class="chip">21–30 nodos · regtest</span>
-    <span class="chip">199 corridas Monte Carlo</span>
+    <span class="chip">179 corridas Monte Carlo</span>
   </div>
 
-  <div class="grid"><div class="tile"><div class="tile-label">Umbral de incentivo</div><div class="tile-value">~29%</div><div class="tile-note">hashpower de Knots donde Core ya pierde al menos un bloque por día por reorganización → le conviene señalar RDTS</div></div>
-<div class="tile"><div class="tile-label">Umbral de victoria</div><div class="tile-value">~57%</div><div class="tile-note">hashpower donde el softfork ya gana (Core reorganiza hacia la cadena limpia) — mucho después del incentivo</div></div>
-<div class="tile"><div class="tile-label">El número de nodos no manda</div><div class="tile-value">16→26</div><div class="tile-note">Knots corre en muchos más nodos que Core y aun así pierde por debajo del umbral de hashpower</div></div>
-<div class="tile"><div class="tile-label">Pico de desperdicio</div><div class="tile-value">15 bloques</div><div class="tile-note">máximo de bloques que descarta Core, justo en el cruce (61% del hashpower)</div></div></div>
+  <div class="grid"><div class="tile"><div class="tile-label">El número de nodos no manda</div><div class="tile-value">16→26</div><div class="tile-note">Knots corre en muchos más nodos que Core y aun así pierde por debajo del umbral de hashpower — lo que decide es el hashpower</div></div>
+<div class="tile"><div class="tile-label">Umbral de victoria</div><div class="tile-value">~57%</div><div class="tile-note">hashpower Knots donde el softfork ya gana (Core reorganiza hacia la cadena limpia y descarta su spam)</div></div>
+<div class="tile"><div class="tile-label">Core pierde ≥1 bloque/día desde</div><div class="tile-value">~38%</div><div class="tile-note">hashpower donde la cadena de Core es reemplazada al menos una vez al día (frecuencia). La lectura económica —cuánto debe pagar el dato— está en el Experimento 3</div></div>
+<div class="tile"><div class="tile-label">Pico de desperdicio</div><div class="tile-value">13 bloques</div><div class="tile-note">máximo de bloques que descarta Core, cerca del cruce (61% del hashpower)</div></div></div>
 
   <div class="card">
     <h2>Probabilidad de que gane el softfork, según el hashpower de Knots</h2>
@@ -127,19 +127,20 @@ td.num{font-family:ui-monospace,Menlo,monospace;text-align:right;font-variant-nu
   </div>
 
   <div class="card">
-    <h2>Incentivo económico: ¿cada cuánto reemplazan la cadena de Core?</h2>
+    <h2>Frecuencia de reemplazo de la cadena de Core</h2>
     <p class="sub">Cada reorganización = la cadena de Core (con datos) reemplazada por la limpia de
-    Knots → Core pierde esos bloques. En tiempo real (1 bloque ≈ 10 minutos, 144 por día). Cuando pasa
-    <b>≥1 vez al día</b>, un minero Core tiene incentivo diario a señalar RDTS para dejar de
-    perder bloques. La franja marca ese umbral; la línea de puntos, el 50% del hashpower.</p>
+    Knots → Core pierde esos bloques. En tiempo real (1 bloque ≈ 10 minutos, 144 por día). La franja
+    marca <b>≥1 reemplazo por día</b>; la línea de puntos, el 50% del hashpower. Es una <b>frecuencia</b>,
+    no el incentivo económico — ese (cuánto debería pagar el dato para valer el riesgo) está en el
+    <a href="sim3.html" style="color:var(--discard)">Experimento 3</a>.</p>
     <div class="chart-wrap" id="w3">
       <svg id="c3" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet"></svg>
       <div class="tooltip" id="t3"></div>
     </div>
     <p class="split-note" style="border-left:3px solid var(--discard);padding-left:14px;margin-top:14px;color:var(--muted);font-size:13.5px;">
-      El <b>umbral de incentivo (~30%)</b> llega mucho antes que el <b>de victoria (~57%)</b>:
-      Core sangra bloques a diario desde que Knots tiene ~30% del hashpower, empujando a los
-      mineros a señalar RDTS — efecto cascada hacia el umbral de victoria.</p>
+      Core empieza a perder <b>≥1 bloque por día</b> por reorganización desde ~38% de hashpower Knots,
+      antes del umbral de victoria (~57%). Que un minero <i>reaccione</i> a esa pérdida — y si le
+      conviene por policy o por consenso — se analiza en los Experimentos 3 y 5.</p>
   </div>
 
   <div class="card">
@@ -166,21 +167,20 @@ td.num{font-family:ui-monospace,Menlo,monospace;text-align:right;font-variant-nu
   </div>
 
   <p class="foot">
-    <b>Conclusión — el cruce que importa es el de los incentivos (~30%), no el de la victoria (~57%).</b>
-    El softfork solo "gana" (Core reorganiza a la cadena limpia) con una leve supermayoría de
-    ~57% del hashpower. Pero <b>mucho antes de eso Core ya está perdiendo bloques</b>: desde apenas
-    <b>~30% de hashpower en Knots</b>, Core sufre <b>≥1 reemplazo de cadena por día</b>. Ese es el
-    umbral accionable: a un minero Core racional le empieza a convenir <b>señalar RDTS</b> para dejar
-    de perder bloques mucho antes de que el softfork sea mayoría — y al hacerlo empuja el share hacia
-    arriba, realimentando el proceso (<b>efecto cascada</b>). El 57% es dónde termina; el 30% es
-    dónde arranca la presión.<br><br>
-    <b>El número de nodos no importa, solo el hashpower.</b> El cruce de victoria (~57%) es casi
-    idéntico al del modelo de nodos iguales, pese a que aquí Core está concentrado en pocos mineros
-    y Knots repartido en hasta 30 nodos. Tener muchos nodos Knots no ayuda a imponer el softfork si
-    no llevan la minería.<br><br>
-    <b>El desperdicio hace pico en el cruce.</b> Los bloques que Core tira son máximos <b>en la zona
-    del cruce</b> (aproximadamente 14 bloques por corrida a 61% del hashpower) y bajan hacia los
-    extremos: con Core dominante nunca cede; con Knots dominante Core reorganiza seguido pero superficial.<br><br>
+    <b>El número de nodos no importa, solo el hashpower.</b> Es el resultado central: el cruce de
+    victoria (~57%) es casi idéntico al del modelo de nodos iguales, pese a que aquí Core está
+    concentrado en pocos mineros y Knots repartido en hasta 30 nodos. Tener muchos nodos Knots no
+    ayuda a imponer el softfork si no llevan la minería.<br><br>
+    <b>Frecuencia de reemplazo.</b> Antes del umbral de victoria, Core ya pierde bloques por
+    reorganización: <b>≥1 por día desde ~38% de hashpower Knots</b>. Es una frecuencia — la
+    interpretación económica (cuánto debería pagar el dato para compensar ese riesgo: premio de
+    equilibrio, que cruza el 100% del premio de bloque a ~54%) está en el
+    <a href="sim3.html" style="color:var(--knots)">Experimento 3</a>, y si a un minero le conviene
+    reaccionar por <i>policy</i> o por <i>consenso</i>, en el
+    <a href="sim5.html" style="color:var(--knots)">Experimento 5</a>.<br><br>
+    <b>El desperdicio hace pico cerca del cruce.</b> Los bloques que Core tira son máximos alrededor
+    del cruce (~13-14 por corrida a ~61% del hashpower) y bajan hacia los extremos: con Core dominante
+    nunca cede; con Knots dominante Core reorganiza seguido pero superficial.<br><br>
     <b>Método.</b> El minero de cada bloque se elige al azar, con probabilidad proporcional a su
     hashpower; cada bloque de Core lleva datos que RDTS invalida (forzados con
     <code>generateblock</code>). Todos los nodos conectados entre sí, con <code>whitelist=noban</code>
@@ -190,7 +190,7 @@ td.num{font-family:ui-monospace,Menlo,monospace;text-align:right;font-variant-nu
 </div>
 
 <script>
-const ROWS = {"rows": [{"step": 0, "knots_share": 0.22, "core_share": 0.78, "n_nodes": 21, "runs": 20, "wins": 0, "p_win": 0.0, "ci_lo": 0, "ci_hi": 0.16113012549493322, "reorgs_mean": 0.05, "reorgs_med": 0.0, "disc_mean": 0.05, "disc_med": 0.0, "depth_mean": 35.8, "reorgs_day": 0.16, "p_ge1_day": 0.148}, {"step": 1, "knots_share": 0.2909, "core_share": 0.7091, "n_nodes": 22, "runs": 20, "wins": 0, "p_win": 0.0, "ci_lo": 0, "ci_hi": 0.16113012549493322, "reorgs_mean": 0.35, "reorgs_med": 0.0, "disc_mean": 0.75, "disc_med": 0.0, "depth_mean": 29.9, "reorgs_day": 1.12, "p_ge1_day": 0.674}, {"step": 2, "knots_share": 0.376, "core_share": 0.624, "n_nodes": 23, "runs": 20, "wins": 1, "p_win": 0.05, "ci_lo": 0.008881219432873136, "ci_hi": 0.23613589351256675, "reorgs_mean": 0.35, "reorgs_med": 0.0, "disc_mean": 1.9, "disc_med": 0.0, "depth_mean": 26.3, "reorgs_day": 1.12, "p_ge1_day": 0.674}, {"step": 3, "knots_share": 0.4621, "core_share": 0.5379, "n_nodes": 24, "runs": 20, "wins": 2, "p_win": 0.1, "ci_lo": 0.027865893984153206, "ci_hi": 0.30103820641179335, "reorgs_mean": 1.6, "reorgs_med": 1.0, "disc_mean": 5.25, "disc_med": 3.0, "depth_mean": 18.4, "reorgs_day": 5.12, "p_ge1_day": 0.994}, {"step": 4, "knots_share": 0.5412, "core_share": 0.4588, "n_nodes": 25, "runs": 20, "wins": 4, "p_win": 0.2, "ci_lo": 0.0806563532712, "ci_hi": 0.41602172202575993, "reorgs_mean": 2.35, "reorgs_med": 2.0, "disc_mean": 7.85, "disc_med": 6.5, "depth_mean": 14.2, "reorgs_day": 7.52, "p_ge1_day": 0.999}, {"step": 5, "knots_share": 0.61, "core_share": 0.39, "n_nodes": 26, "runs": 20, "wins": 17, "p_win": 0.85, "ci_lo": 0.6395767041130426, "ci_hi": 0.9476322080405041, "reorgs_mean": 5, "reorgs_med": 5.0, "disc_mean": 14.65, "disc_med": 15.5, "depth_mean": 2.5, "reorgs_day": 16.0, "p_ge1_day": 1.0}, {"step": 6, "knots_share": 0.6681, "core_share": 0.3319, "n_nodes": 27, "runs": 20, "wins": 14, "p_win": 0.7, "ci_lo": 0.4810232237710206, "ci_hi": 0.854524726031006, "reorgs_mean": 4.6, "reorgs_med": 4.0, "disc_mean": 11.4, "disc_med": 11.0, "depth_mean": 3.8, "reorgs_day": 14.72, "p_ge1_day": 1.0}, {"step": 7, "knots_share": 0.7214, "core_share": 0.2786, "n_nodes": 28, "runs": 20, "wins": 17, "p_win": 0.85, "ci_lo": 0.6395767041130426, "ci_hi": 0.9476322080405041, "reorgs_mean": 5.25, "reorgs_med": 5.0, "disc_mean": 10.3, "disc_med": 10.0, "depth_mean": 1.9, "reorgs_day": 16.8, "p_ge1_day": 1.0}, {"step": 8, "knots_share": 0.7706, "core_share": 0.2294, "n_nodes": 29, "runs": 19, "wins": 19, "p_win": 1.0, "ci_lo": 0.8318156346315496, "ci_hi": 1, "reorgs_mean": 4.95, "reorgs_med": 5, "disc_mean": 9.11, "disc_med": 9, "depth_mean": 0.8, "reorgs_day": 15.84, "p_ge1_day": 1.0}, {"step": 9, "knots_share": 0.8165, "core_share": 0.1835, "n_nodes": 30, "runs": 20, "wins": 20, "p_win": 1.0, "ci_lo": 0.8388698745050667, "ci_hi": 1, "reorgs_mean": 4.85, "reorgs_med": 5.0, "disc_mean": 7.25, "disc_med": 7.5, "depth_mean": 0.2, "reorgs_day": 15.52, "p_ge1_day": 1.0}]}.rows;
+const ROWS = {"rows": [{"step": 0, "knots_share": 0.22, "core_share": 0.78, "n_nodes": 21, "runs": 20, "wins": 0, "p_win": 0.0, "ci_lo": 0, "ci_hi": 0.16113012549493322, "reorgs_mean": 0, "reorgs_med": 0.0, "disc_mean": 0, "disc_med": 0.0, "depth_mean": 35.9, "reorgs_day": 0.0, "p_ge1_day": 0.0}, {"step": 1, "knots_share": 0.2909, "core_share": 0.7091, "n_nodes": 22, "runs": 20, "wins": 0, "p_win": 0.0, "ci_lo": 0, "ci_hi": 0.16113012549493322, "reorgs_mean": 0.15, "reorgs_med": 0.0, "disc_mean": 0.65, "disc_med": 0.0, "depth_mean": 29.7, "reorgs_day": 0.48, "p_ge1_day": 0.381}, {"step": 2, "knots_share": 0.376, "core_share": 0.624, "n_nodes": 23, "runs": 20, "wins": 2, "p_win": 0.1, "ci_lo": 0.027865893984153206, "ci_hi": 0.30103820641179335, "reorgs_mean": 0.5, "reorgs_med": 0.0, "disc_mean": 3.4, "disc_med": 0.0, "depth_mean": 24.5, "reorgs_day": 1.6, "p_ge1_day": 0.798}, {"step": 3, "knots_share": 0.4621, "core_share": 0.5379, "n_nodes": 24, "runs": 20, "wins": 0, "p_win": 0.0, "ci_lo": 0, "ci_hi": 0.16113012549493322, "reorgs_mean": 1, "reorgs_med": 0.0, "disc_mean": 2.25, "disc_med": 0.0, "depth_mean": 21.4, "reorgs_day": 3.2, "p_ge1_day": 0.959}, {"step": 4, "knots_share": 0.5412, "core_share": 0.4588, "n_nodes": 25, "runs": 20, "wins": 5, "p_win": 0.25, "ci_lo": 0.11186005278940309, "ci_hi": 0.4687050099580636, "reorgs_mean": 2.55, "reorgs_med": 3.0, "disc_mean": 7.9, "disc_med": 5.0, "depth_mean": 13.6, "reorgs_day": 8.16, "p_ge1_day": 1.0}, {"step": 5, "knots_share": 0.61, "core_share": 0.39, "n_nodes": 26, "runs": 20, "wins": 15, "p_win": 0.75, "ci_lo": 0.5312949900419365, "ci_hi": 0.888139947210597, "reorgs_mean": 4.5, "reorgs_med": 4.0, "disc_mean": 13.25, "disc_med": 14.0, "depth_mean": 4.2, "reorgs_day": 14.4, "p_ge1_day": 1.0}, {"step": 6, "knots_share": 0.6681, "core_share": 0.3319, "n_nodes": 27, "runs": 20, "wins": 16, "p_win": 0.8, "ci_lo": 0.5839782779742401, "ci_hi": 0.9193436467288, "reorgs_mean": 4.65, "reorgs_med": 4.5, "disc_mean": 11.45, "disc_med": 11.5, "depth_mean": 3.1, "reorgs_day": 14.88, "p_ge1_day": 1.0}, {"step": 7, "knots_share": 0.7214, "core_share": 0.2786, "n_nodes": 28, "runs": 20, "wins": 17, "p_win": 0.85, "ci_lo": 0.6395767041130426, "ci_hi": 0.9476322080405041, "reorgs_mean": 4.9, "reorgs_med": 4.5, "disc_mean": 10.25, "disc_med": 10.0, "depth_mean": 1.8, "reorgs_day": 15.68, "p_ge1_day": 1.0}, {"step": 8, "knots_share": 0.7706, "core_share": 0.2294, "n_nodes": 29, "runs": 19, "wins": 19, "p_win": 1.0, "ci_lo": 0.8318156346315496, "ci_hi": 1, "reorgs_mean": 5.11, "reorgs_med": 5, "disc_mean": 8.79, "disc_med": 9, "depth_mean": 0.4, "reorgs_day": 16.35, "p_ge1_day": 1.0}]}.rows;
 const cssv = n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 function E(t,a){const e=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a)e.setAttribute(k,a[k]);return e;}
 const XMIN=15,XMAX=90;
@@ -251,7 +251,7 @@ function drawIncentive(){
   // franja de incentivo (al menos 1 por día)
   svg.appendChild(E('rect',{x:mL,y:mT,width:iw,height:ys(1)-mT,fill:disc,opacity:0.07}));
   svg.appendChild(E('line',{x1:mL,y1:ys(1),x2:W-mR,y2:ys(1),stroke:disc,'stroke-width':1.5,'stroke-dasharray':'2 3'}));
-  const lab=E('text',{x:W-mR,y:ys(1)-6,'text-anchor':'end',fill:disc,'font-size':11});lab.textContent='≥ 1 reemplazo por día → incentivo a señalar RDTS';svg.appendChild(lab);
+  const lab=E('text',{x:W-mR,y:ys(1)-6,'text-anchor':'end',fill:disc,'font-size':11});lab.textContent='≥ 1 reemplazo de cadena por día';svg.appendChild(lab);
   svg.appendChild(E('line',{x1:xs(50),y1:mT,x2:xs(50),y2:mT+ih,stroke:ref,'stroke-width':1.5,'stroke-dasharray':'5 4'}));
   for(let s=20;s<=90;s+=10){const t=E('text',{x:xs(s),y:H-mB+20,'text-anchor':'middle',fill:muted,'font-size':11,'font-family':'ui-monospace,Menlo,monospace'});t.textContent=s+'%';svg.appendChild(t);}
   const xl=E('text',{x:mL+iw/2,y:H-3,'text-anchor':'middle',fill:muted,'font-size':12});xl.textContent='Hashpower de Knots (%)';svg.appendChild(xl);
